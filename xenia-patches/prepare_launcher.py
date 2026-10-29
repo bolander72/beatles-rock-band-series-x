@@ -97,12 +97,13 @@ edit("src/xenia/gpu/d3d12/pipeline_cache.cc", '    d3d12_pipeline_creation_threa
      '    d3d12_pipeline_creation_threads, 2,')
 edit("xenia-canary-uwp/CMakeLists.txt", "  App.cpp\n", "  App.cpp\n  console_accounts.cc\n")
 edit("xenia-canary-uwp/CMakeLists.txt", "# Keep all upstream app dialogs, including netplay, in the packaged app.",
-     '''# MSVC 14.44 crashes in PrepareStorageAsync during link-time code generation.
-# Emit this setup-only coroutine service as native code instead. The emulator,
-# input adapter and gameplay code retain their normal release optimizations.
+     '''# MSVC 14.44 crashes optimizing PrepareStorageAsync, including without LTCG.
+# Compile this setup-only coroutine service without optimization or inlining.
+# The emulator, input adapter and gameplay retain normal release optimization.
 if(MSVC)
   set_property(SOURCE console_accounts.cc APPEND PROPERTY COMPILE_OPTIONS
-    "$<$<CONFIG:Release>:/GL->")
+    "$<$<CONFIG:Release>:/GL->" "$<$<CONFIG:Release>:/Od>"
+    "$<$<CONFIG:Release>:/Ob0>")
 endif()
 
 # Keep all upstream app dialogs, including netplay, in the packaged app.''')
