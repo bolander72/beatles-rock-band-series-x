@@ -4,7 +4,7 @@
 
 On Xbox Series X with one Xbox PDP Riffmaster, the underlying build played several songs. The player reported normal fret/strum behavior, working whammy, and reliable ordinary tilt activation with 150% gain. After the last gameplay tuning, the player described gameplay as wonderful. This is evidence for the tested songs and setup, not a full-game or full-band certification.
 
-An inconsistent 10–30 second intro-skip delay was still reported. The source input gate was reproduced waiting indefinitely for guitar sensor axes to center after host UI closed. Version 0.6.0.8 compiled successfully with a guitar-specific release fix; it preserves physical whammy/tilt state. The direct launcher includes that fix. Physical intro confirmation and direct-launch console verification remain pending for the first launcher release.
+An inconsistent 10–30 second intro-skip delay was still reported. The source input gate was reproduced waiting indefinitely for guitar sensor axes to center after host UI closed. Version 0.6.0.8 compiled successfully with a guitar-specific release fix; it preserves physical whammy/tilt state. The direct launcher includes that fix. On 0.6.0.9 the player confirmed one Menu/Start press now skips the intro promptly. Direct-launch console verification remains pending.
 
 Version 0.6.0.9 reached its setup screen and green/A started the verified game executable, but the first test remained on a solid blue screen during early guest startup. The failed-session log is preserved privately. This preview is not ready for a public binary release. Version 0.6.0.10 is being prepared to create an offline Player 1 automatically when no local account exists, avoiding the profile wizard and normal launcher screen. That convenience change is not evidence that the early startup hang is fixed.
 
@@ -28,7 +28,8 @@ Version 0.6.0.9 reached its setup screen and green/A started the verified game e
 - [ ] Repeated launch uses the remembered game copy.
 - [ ] Setup is usable and Play works with green/A.
 - [ ] Advanced settings can be opened and closed.
-- [ ] Intro input, song play, whammy and normal tilt checked on console.
+- [x] Intro input on 0.6.0.9: one Menu/Start press skips promptly.
+- [ ] Song play, whammy and normal tilt rechecked on the final direct-launch build.
 - [ ] Missing game/drive returns to setup.
 
 The release notes will identify which console checks have actually passed. Unsupported instruments and untested configurations stay documented as such.
