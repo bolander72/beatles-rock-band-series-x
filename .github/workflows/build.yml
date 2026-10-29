@@ -1,0 +1,23 @@
+name: Build Xbox launcher
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['xenia-patches/**', '.github/workflows/build.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Build pinned emulator, launcher and full instrument adapter
+        shell: pwsh
+        run: ./xenia-patches/build-full.ps1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: success()
+        with:
+          name: beatles-launcher-x64
+          path: xenia-artifacts/*
+          retention-days: 14

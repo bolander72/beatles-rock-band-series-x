@@ -1,0 +1,12 @@
+/build/
+/xenia-source/
+/xenia-artifacts/
+/xenia-symbols/
+/full-layout/
+/artifacts/
+__pycache__/
+*.pfx
+*.key
+*.obj
+*.exe
+.DS_Store

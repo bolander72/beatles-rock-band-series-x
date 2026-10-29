@@ -1,0 +1,8 @@
+LIBRARY riffinput
+EXPORTS
+ XInputGetState=RiffGetState
+ XInputGetCapabilities=RiffGetCaps
+ XInputSetState=RiffSetState
+ XInputGetKeystroke=RiffGetKeys
+ XInputEnable=RiffEnable
+ XInputGetStateEx=RiffGetState @100
