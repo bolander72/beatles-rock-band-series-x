@@ -6,7 +6,7 @@ A community launcher for playing your own Xbox 360 copy of **The Beatles: Rock B
 
 **Open the tile. The game starts.** Normal startup goes directly to your configured game copy. A recovery screen is available when files need attention. The Xbox Riffmaster is mapped automatically, including whammy and tilt.
 
-**Status: experimental, first launcher release in testing.** The underlying build has been played on Series X with one Xbox PDP Riffmaster. Direct launch is being verified before a downloadable release is published. This is an unofficial community project and still requires Developer Mode; it is not an official backward-compatible release or Microsoft Store product.
+**Status: experimental, first launcher release in testing.** Version 0.6.0.10 reached the game intro in three full quit-and-reopen checks on Series X, with no profile or Play selection. The underlying build has been played with one Xbox PDP Riffmaster. Final-build gameplay, story-save reload and account association still need verification before publication. This is an unofficial community project and still requires Developer Mode; it is not an official backward-compatible release or Microsoft Store product.
 
 No game executables/data, music, charts, DLC, console keys, or firmware are included. Supply your own game dump obtained and used as permitted where you live. This project does not download games. The supplied promotional images in `artwork/` are separate from the code license; see [artwork notices](artwork/README.md).
 
@@ -16,7 +16,7 @@ No game executables/data, music, charts, DLC, console keys, or firmware are incl
 2. For a one-time default, enable **Device Portal → Settings → Preference → Treat UWP apps as games by default**, leave it on, and restart if prompted. An existing App assignment may need one final correction in Dev Home → launcher → **View** → **Details** → **App type: Game**. App mode does not provide the memory and input access this game needs.
 3. Once a release is available, download its **x64 install bundle** from this project's **Releases**. Install its APPX through Device Portal with the included Microsoft x64 VCLibs dependency if needed. The separate, larger **corresponding-source.tar.gz** is optional code for inspecting or rebuilding; players do not need it.
 4. Copy the complete extracted game folder to `D:/DevelopmentFiles/Games/xbox360/Beatles-Rock-Band`, keeping `default.xex` and the other files together. Alternatively, choose your game folder in the launcher's setup screen.
-5. Connect the Xbox Riffmaster's USB receiver, turn on the guitar, and open **The Beatles: Rock Band**. The upcoming 0.6.0.10 build creates an offline **Player 1** automatically if no local profile exists, so a single valid game copy can open directly. Existing profiles are preserved. If recovery is shown, select the correct game copy and **Play** with green/A. Console verification is still in progress; see [validation](docs/VALIDATION.md).
+5. Connect the Xbox Riffmaster's USB receiver, turn on the guitar, and open **The Beatles: Rock Band**. Version 0.6.0.10 creates an offline **Player 1** automatically if no local profile exists, so a single valid game copy can open directly. That profile persisted across the restart checks. Existing profiles are preserved. If recovery is shown, select the correct game copy and **Play** with green/A. See [validation](docs/VALIDATION.md) for the remaining checks.
 6. Use the game's calibration settings once for your TV and sound system. Controller mapping does not measure audio/video delay for you.
 
 See the [step-by-step installation guide](docs/INSTALL.md), [instrument compatibility](docs/COMPATIBILITY.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
@@ -31,7 +31,7 @@ See the [step-by-step installation guide](docs/INSTALL.md), [instrument compatib
 - A guitar-specific input-release fix: a resting whammy bar no longer needs to look like a centered thumbstick after a host dialog closes.
 - Offline play and two shader-compiler workers by default. Existing local settings are preserved on update.
 
-This first version supports **one Xbox Riffmaster**. Two guitars, drums, microphones, online play and DLC have not been verified. It does not make legacy Xbox 360 USB instruments compatible with Series X.
+This build supports **one Xbox Riffmaster**. Independent second-guitar routing and microphone capture are not implemented yet. Drums, online play and DLC have not been verified. Native Series X account association is being investigated; the current offline player is separate from Microsoft/Xbox Live sign-in. It does not make legacy Xbox 360 USB instruments compatible with Series X.
 
 ## Build and source
 

@@ -4,9 +4,11 @@
 
 On Xbox Series X with one Xbox PDP Riffmaster, the underlying build played several songs. The player reported normal fret/strum behavior, working whammy, and reliable ordinary tilt activation with 150% gain. After the last gameplay tuning, the player described gameplay as wonderful. This is evidence for the tested songs and setup, not a full-game or full-band certification.
 
-An inconsistent 10–30 second intro-skip delay was still reported. The source input gate was reproduced waiting indefinitely for guitar sensor axes to center after host UI closed. Version 0.6.0.8 compiled successfully with a guitar-specific release fix; it preserves physical whammy/tilt state. The direct launcher includes that fix. On 0.6.0.9 the player confirmed one Menu/Start press now skips the intro promptly. Direct-launch console verification remains pending.
+An inconsistent 10–30 second intro-skip delay was reported. The source input gate was reproduced waiting indefinitely for guitar sensor axes to center after host UI closed. Version 0.6.0.8 compiled successfully with a guitar-specific release fix; it preserves physical whammy/tilt state. The direct launcher includes that fix. On 0.6.0.9 the player confirmed one Menu/Start press skips the intro promptly.
 
-Version 0.6.0.9 reached its setup screen and green/A started the verified game executable, but the first test remained on a solid blue screen during early guest startup. The failed-session log is preserved privately. This preview is not ready for a public binary release. Version 0.6.0.10 is being prepared to create an offline Player 1 automatically when no local account exists, avoiding the profile wizard and normal launcher screen. That convenience change is not evidence that the early startup hang is fixed.
+The first 0.6.0.9 Play attempt remained on a solid blue screen during early guest startup. A subsequent launch reached the game. Version 0.6.0.10 automatically creates an offline Player 1 when no local account exists. Three full quit-and-reopen launches through Device Portal reached the actual animated intro without any controller input, profile selection or Play screen. The second and third session logs show the same local profile loaded into slot 0, successful audio registration and the full 5,120 MiB Game allowance. Existing sensor settings were preserved byte-for-byte. These checks used the existing game files and shader cache. The earlier blue stall did not recur in these three checks; its root cause has not been established.
+
+The local profile persisted, but story progress has not yet been saved and reloaded in this build. A separate diagnostic successfully enumerated a native signed-in Xbox account and reported support for the native account picker. That does not yet provide native account association in the launcher. Independent second-guitar routing and USB microphone capture are still implementation work.
 
 ## Automated checks
 
@@ -20,16 +22,19 @@ Version 0.6.0.9 reached its setup screen and green/A started the verified game e
 
 ## First-launcher release checklist
 
-- [x] Windows launcher build passes (run 40938459908, source `eb673d4`).
+- [x] Windows launcher build passes (run 40948354810, source `6694ab6`, version 0.6.0.10).
 - [x] APPX contents, hashes, dependencies, notices and corresponding-source archive checked: 1,873 package blocks, 219 runtime imports, and 55,726 source-archive entries.
 - [x] Installed app display name is The Beatles: Rock Band (confirmed in Device Portal after registration).
-- [x] Persistent Game default survives reboot; 0.6.0.9 receives the full 5,120 MiB allowance after registration.
-- [ ] Cold tile launch opens Beatles without the Xenia browser.
-- [ ] Repeated launch uses the remembered game copy.
+- [x] Persistent Game default survives reboot; 0.6.0.10 receives the full 5,120 MiB allowance after registration.
+- [x] Three full-stop launches through Device Portal open Beatles without the Xenia browser, profile wizard or Play screen.
+- [ ] Player verifies the physical Dev Home tile launch on 0.6.0.10.
+- [x] Repeated launch uses the remembered game copy and the same persistent local profile.
 - [ ] Setup is usable and Play works with green/A.
 - [ ] Advanced settings can be opened and closed.
 - [x] Intro input on 0.6.0.9: one Menu/Start press skips promptly.
 - [ ] Song play, whammy and normal tilt rechecked on the final direct-launch build.
+- [ ] Story progress saved, app fully closed, and progress restored.
+- [ ] Native Xbox account selection associated with the correct persistent local profile.
 - [ ] Missing game/drive returns to setup.
 
 The release notes will identify which console checks have actually passed. Unsupported instruments and untested configurations stay documented as such.

@@ -63,7 +63,7 @@ You can instead keep an extracted copy on accessible storage and select **Choose
 1. Plug the Xbox Riffmaster's USB receiver into the Series X, turn on the guitar and let it reconnect.
 2. For the verified single-guitar setup, turn the ordinary controller off before opening the app. Use the guitar's Xbox button to return to Dev Home if needed.
 3. Open **The Beatles: Rock Band**. Once configured, the game launches directly without the Xenia game browser.
-4. On a new installation, a local Xenia player/profile prompt may appear. Create a local player to enable automatic startup and saved progress; this is separate from a Microsoft account. Then select **Play** with green/A. If you decline profile creation, you can play as a guest by selecting Play, but automatic startup will return to setup until a local profile exists. You can use a regular controller for initial profile setup; afterward close the app, turn that controller off, and reopen with the guitar connected for the verified player-slot arrangement.
+4. Version 0.6.0.10 automatically creates an offline **Player 1** when no local profile exists. Its identity and sign-in persisted across three startup checks. You should not need the emulator's profile wizard or a Play screen during normal startup with one valid game copy. This local player is separate from your Microsoft account; native Xbox account association and story-save/reload testing are still in progress.
 5. If setup remains visible, check App type **Game**, game-file location, and the receiver connection. Use **Refresh** after copying files.
 
 ## 5. Calibrate once

@@ -14,12 +14,12 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Download the audited successful build
         run: |
-          gh run download 40938459908 --repo "$GITHUB_REPOSITORY" --name beatles-launcher-x64 --dir incoming
-          git fetch --depth 1 origin eb673d48afa22c4f5f666fc34b6945e9533eadb2
-          git diff --exit-code eb673d48afa22c4f5f666fc34b6945e9533eadb2 HEAD -- xenia-patches .github/workflows/build.yml
+          gh run download 40948354810 --repo "$GITHUB_REPOSITORY" --name beatles-launcher-x64 --dir incoming
+          git fetch --depth 1 origin 6694ab6ddf476a336d3f968f5b5db5ca43d4451a
+          git diff --exit-code 6694ab6ddf476a336d3f968f5b5db5ca43d4451a HEAD -- xenia-patches .github/workflows/build.yml
       - name: Verify and assemble the installation bundle
         run: python3 tools/package_release.py --artifacts incoming --output release
       - name: Create a draft prerelease for console verification
         run: |
-          gh release create v0.6.0.9 --repo "$GITHUB_REPOSITORY" --draft --prerelease --target "$GITHUB_SHA" --title "The Beatles: Rock Band - Developer Mode preview 0.6.0.9" --notes-file docs/RELEASE-0.6.0.9.md
-          gh release upload v0.6.0.9 --repo "$GITHUB_REPOSITORY" release/The-Beatles-Rock-Band-0.6.0.9-x64.zip incoming/corresponding-source.tar.gz release/SHA256SUMS.txt release/VERIFICATION.json release/INSTALL.md
+          gh release create v0.6.0.10 --repo "$GITHUB_REPOSITORY" --draft --prerelease --target "$GITHUB_SHA" --title "The Beatles: Rock Band - Developer Mode preview 0.6.0.10" --notes-file docs/RELEASE-0.6.0.10.md
+          gh release upload v0.6.0.10 --repo "$GITHUB_REPOSITORY" release/The-Beatles-Rock-Band-0.6.0.10-x64.zip incoming/corresponding-source.tar.gz release/SHA256SUMS.txt release/VERIFICATION.json release/INSTALL.md

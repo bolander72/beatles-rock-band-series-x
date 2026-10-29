@@ -11,7 +11,7 @@ Status reflects observed testing, not a claim that every device works.
 | Xbox 360 wired Guitar Hero guitars | Did not enumerate/power in the tested Series X setup; this app does not add USB driver support |
 | Legacy wireless Xbox 360 guitars | Not verified; they are not ordinary Bluetooth devices |
 | Rock Band drums | Not verified |
-| USB microphones / vocals | Not verified |
+| USB microphones / vocals | Capture/guest microphone support is not implemented in this build |
 | Standard Xbox controller | Standard XInput forwarding retained; the game may treat it as a vocals player |
 | Xbox Series S / Xbox One | Not console-tested for this project |
 | DLC, online services, full-band multiplayer | Not verified |
@@ -19,6 +19,8 @@ Status reflects observed testing, not a claim that every device works.
 The tested guitar is the **Xbox** PDP Riffmaster with its matching USB receiver. Bluetooth support on other devices is not a substitute for that receiver on Xbox.
 
 The bridge currently selects one matching Riffmaster. It does not distinguish and route two independent Riffmasters. Do not assume this release supports a full band just because single-guitar Quick Play works.
+
+Version 0.6.0.10 uses an emulated offline local profile. A separate console diagnostic can enumerate a signed-in native Xbox user and reports native account-picker support, but account-to-save binding is not implemented in the launcher. Xbox Live authentication and cloud saves are not supplied.
 
 Whammy and tilt are preserved as separate analog values. Positive tilt is scaled to 150% by default to make ordinary upright movement sufficient; the mapping clamps to the normal range. The audio/video calibration for a specific TV and speaker setup still belongs in the game's calibration menu.
 
