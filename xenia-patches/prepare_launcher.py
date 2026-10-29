@@ -106,7 +106,7 @@ edit("xenia-canary-uwp/App.cpp", '    UWP::StartXenia();',
     UWP::StartXenia();''')
 edit("xenia-canary-uwp/App.cpp", '    auto appView = winrt::Windows::UI::ViewManagement::ApplicationView::',
      '''    try {
-      auto activation = args.try_as<winrt::Windows::ApplicationModel::Activation::IUserActivatedEventArgs>();
+      auto activation = args.try_as<winrt::Windows::ApplicationModel::Activation::IActivatedEventArgsWithUser>();
       if (activation && activation.User())
         beatles::SetConsoleActivatingUserId(winrt::to_string(activation.User().NonRoamableId()));
     } catch (const winrt::hresult_error&) {}

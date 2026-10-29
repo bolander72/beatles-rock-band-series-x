@@ -38,14 +38,6 @@ build\console-profile-migration-test.exe
 if errorlevel 1 exit /b 1
 build\party-launch-test.exe
 if errorlevel 1 exit /b 1
-cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\console_profiles_test.cc /Fe:build\console-profiles-test.exe
-if errorlevel 1 exit /b 1
-build\console-profiles-test.exe
-if errorlevel 1 exit /b 1
-cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\console_profile_migration_test.cc /Fe:build\console-profile-migration-test.exe
-if errorlevel 1 exit /b 1
-build\console-profile-migration-test.exe
-if errorlevel 1 exit /b 1
 if not exist build\party-ui mkdir build\party-ui
 cl /nologo /std:c++17 /EHsc /W3 /D_CRT_SECURE_NO_WARNINGS /Ixenia-source\third_party\imgui /Ixenia-patches xenia-patches\party_ui_test.cc xenia-source\third_party\imgui\imgui.cpp xenia-source\third_party\imgui\imgui_draw.cpp xenia-source\third_party\imgui\imgui_widgets.cpp xenia-source\third_party\imgui\imgui_tables.cpp /Fo:build\party-ui\ /Fe:build\party-ui-test.exe /link user32.lib imm32.lib
 if errorlevel 1 exit /b 1
@@ -67,16 +59,18 @@ $msbuild="$vs\MSBuild\Current\Bin\MSBuild.exe"
 $projects=@(Get-ChildItem build/uwp -Recurse -Filter *.vcxproj | Where-Object {$_.BaseName -in @('xenia-uwp','xenia-kernel')})
 if($projects.Count -ne 2){throw 'Native account preflight projects not found'}
 $preflightCount=0
+$preflightFailures=@()
 foreach($project in $projects){
   [xml]$description=Get-Content $project.FullName
   foreach($item in $description.SelectNodes("//*[local-name()='ClCompile' and @Include]")){
     if($item.Include -notmatch '[\\/](console_accounts\.cc|App\.cpp|emulator_window\.cc|xam_ui\.cc)$'){continue}
     & $msbuild $project.FullName /t:ClCompile /p:Configuration=Release /p:Platform=x64 /p:BuildProjectReferences=false "/p:SelectedFiles=$($item.Include)" /verbosity:minimal
-    if($LASTEXITCODE -ne 0){throw "Native account preflight failed: $($item.Include)"}
+    if($LASTEXITCODE -ne 0){$preflightFailures += $item.Include}
     ++$preflightCount
   }
 }
 if($preflightCount -ne 4){throw 'Expected all four native account integration units to compile'}
+if($preflightFailures.Count){throw "Native account preflight failed: $($preflightFailures -join ', ')"}
 Set-Location $root
 python xenia-patches/archive_source.py xenia-source xenia-artifacts/corresponding-source.tar.gz
 if($LASTEXITCODE -ne 0){throw 'Corresponding source archive failed'}
