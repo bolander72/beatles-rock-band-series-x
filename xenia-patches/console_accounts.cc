@@ -24,10 +24,10 @@
 namespace beatles {
 namespace {
 using namespace winrt;
-using namespace Windows::Foundation;
-using namespace Windows::Storage;
-using namespace Windows::System;
-using namespace Windows::UI::Core;
+using namespace winrt::Windows::Foundation;
+using namespace winrt::Windows::Storage;
+using namespace winrt::Windows::System;
+using namespace winrt::Windows::UI::Core;
 namespace fs = std::filesystem;
 struct ConsoleUser { User user{nullptr}; std::string id, name; };
 std::vector<ConsoleUser> console_users;
@@ -55,7 +55,7 @@ template <typename Operation> auto WaitForConsole(const Operation& operation, bo
 void ShowConsoleError(const std::string& message, bool allow_quit) {
   if (allow_quit && UWP::HasQuit()) return;
   try {
-    Windows::UI::Popups::MessageDialog dialog(to_hstring(message), L"Unable to open saved progress");
+    winrt::Windows::UI::Popups::MessageDialog dialog(to_hstring(message), L"Unable to open saved progress");
     WaitForConsole(dialog.ShowAsync(), allow_quit);
   } catch (...) {}
 }
