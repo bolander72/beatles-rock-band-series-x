@@ -8,6 +8,8 @@ A community launcher for playing your own Xbox 360 copy of **The Beatles: Rock B
 
 **Status: experimental, first launcher release in testing.** Version 0.6.0.10 reached the game intro in three full quit-and-reopen checks on Series X, with no profile or Play selection. The underlying build has been played with one Xbox PDP Riffmaster. Final-build gameplay, story-save reload and account association still need verification before publication. This is an unofficial community project and still requires Developer Mode; it is not an official backward-compatible release or Microsoft Store product.
 
+Development source now targets **0.6.0.11**, adding native console-account selection and migration of existing local state into multi-user storage. This integration is awaiting its full Windows build and console checks. It adds `userAccountInformation` permission to associate local saves with native accounts. The 0.6.0.10 draft remains the earlier offline Player 1 build described in the installation guide. Native account association does not provide Xbox Live authentication or cloud saves.
+
 No game executables/data, music, charts, DLC, console keys, or firmware are included. Supply your own game dump obtained and used as permitted where you live. This project does not download games. The supplied promotional images in `artwork/` are separate from the code license; see [artwork notices](artwork/README.md).
 
 ## Start here

@@ -28,7 +28,23 @@ build\mapping-test.exe
 if errorlevel 1 exit /b 1
 cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\party_launch_test.cc /Fe:build\party-launch-test.exe
 if errorlevel 1 exit /b 1
+cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\console_profiles_test.cc /Fe:build\console-profiles-test.exe
+if errorlevel 1 exit /b 1
+build\console-profiles-test.exe
+if errorlevel 1 exit /b 1
+cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\console_profile_migration_test.cc /Fe:build\console-profile-migration-test.exe
+if errorlevel 1 exit /b 1
+build\console-profile-migration-test.exe
+if errorlevel 1 exit /b 1
 build\party-launch-test.exe
+if errorlevel 1 exit /b 1
+cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\console_profiles_test.cc /Fe:build\console-profiles-test.exe
+if errorlevel 1 exit /b 1
+build\console-profiles-test.exe
+if errorlevel 1 exit /b 1
+cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\console_profile_migration_test.cc /Fe:build\console-profile-migration-test.exe
+if errorlevel 1 exit /b 1
+build\console-profile-migration-test.exe
 if errorlevel 1 exit /b 1
 if not exist build\party-ui mkdir build\party-ui
 cl /nologo /std:c++17 /EHsc /W3 /D_CRT_SECURE_NO_WARNINGS /Ixenia-source\third_party\imgui /Ixenia-patches xenia-patches\party_ui_test.cc xenia-source\third_party\imgui\imgui.cpp xenia-source\third_party\imgui\imgui_draw.cpp xenia-source\third_party\imgui\imgui_widgets.cpp xenia-source\third_party\imgui\imgui_tables.cpp /Fo:build\party-ui\ /Fe:build\party-ui-test.exe /link user32.lib imm32.lib
@@ -41,11 +57,30 @@ exit /b %errorlevel%
 Set-Content build/tests.cmd $compile
 cmd /d /c "$root\build\tests.cmd"
 if($LASTEXITCODE -ne 0){throw 'Full mapping checks failed'}
-python xenia-patches/archive_source.py xenia-source xenia-artifacts/corresponding-source.tar.gz
-if($LASTEXITCODE -ne 0){throw 'Corresponding source archive failed'}
 Set-Location xenia-source
 cmake --preset uwp
 if($LASTEXITCODE -ne 0){throw 'UWP configure failed'}
+# Compile the changed integration units with their real generated project
+# settings before the much longer emulator build. SelectedFiles is the MSBuild
+# single-file compile target; no project references or linking are needed here.
+$msbuild="$vs\MSBuild\Current\Bin\MSBuild.exe"
+$projects=@(Get-ChildItem build/uwp -Recurse -Filter *.vcxproj | Where-Object {$_.BaseName -in @('xenia-uwp','xenia-kernel')})
+if($projects.Count -ne 2){throw 'Native account preflight projects not found'}
+$preflightCount=0
+foreach($project in $projects){
+  [xml]$description=Get-Content $project.FullName
+  foreach($item in $description.SelectNodes("//*[local-name()='ClCompile' and @Include]")){
+    if($item.Include -notmatch '[\\/](console_accounts\.cc|App\.cpp|emulator_window\.cc|xam_ui\.cc)$'){continue}
+    & $msbuild $project.FullName /t:ClCompile /p:Configuration=Release /p:Platform=x64 /p:BuildProjectReferences=false "/p:SelectedFiles=$($item.Include)" /verbosity:minimal
+    if($LASTEXITCODE -ne 0){throw "Native account preflight failed: $($item.Include)"}
+    ++$preflightCount
+  }
+}
+if($preflightCount -ne 4){throw 'Expected all four native account integration units to compile'}
+Set-Location $root
+python xenia-patches/archive_source.py xenia-source xenia-artifacts/corresponding-source.tar.gz
+if($LASTEXITCODE -ne 0){throw 'Corresponding source archive failed'}
+Set-Location xenia-source
 cmake --build build/uwp --config Release --target riffinput -- /m:2 /verbosity:minimal
 if($LASTEXITCODE -ne 0){throw 'Full input adapter compile failed'}
 cmake --build --preset uwp-release -- /m:3 /p:CL_MPCount=2 /verbosity:minimal
@@ -54,7 +89,7 @@ Set-Location $root
 # Repack to include the explicitly loaded input DLL even if the VS packager
 # omits an import library whose exports are all resolved dynamically.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory("$root\xenia-source\build\uwp\release\Xenia-Netplay-0.6.0.10.appx","$root\full-layout")
+[IO.Compression.ZipFile]::ExtractToDirectory("$root\xenia-source\build\uwp\release\Xenia-Netplay-0.6.0.11.appx","$root\full-layout")
 $adapter=Get-ChildItem xenia-source/build/uwp -Recurse -Filter riffinput.dll | Where-Object {$_.FullName -match 'Release'} | Select-Object -First 1
 if(!$adapter){throw 'Built input adapter missing'}
 Copy-Item $adapter.FullName full-layout/riffinput.dll -Force
@@ -64,7 +99,7 @@ Copy-Item THIRD_PARTY_NOTICES.md full-layout/Licenses/Launcher/THIRD_PARTY_NOTIC
 Remove-Item -LiteralPath full-layout/AppxBlockMap.xml,full-layout/AppxSignature.p7x,'full-layout/[Content_Types].xml',full-layout/AppxMetadata/CodeIntegrity.cat -Force -ErrorAction SilentlyContinue
 $sdkRoot="${env:ProgramFiles(x86)}\Windows Kits\10"
 $sdk=Get-ChildItem "$sdkRoot\bin" -Directory | Where-Object {Test-Path "$($_.FullName)\x64\signtool.exe"} | Sort-Object {[version]$_.Name} -Descending | Select-Object -First 1
-$package="$root\xenia-artifacts\Beatles-Rock-Band-Launcher-0.6.0.10-x64.appx"
+$package="$root\xenia-artifacts\Beatles-Rock-Band-Launcher-0.6.0.11-x64.appx"
 & "$($sdk.FullName)\x64\makeappx.exe" pack /d full-layout /p $package /o /h SHA256
 if($LASTEXITCODE -ne 0){throw 'Package validation failed'}
 $cert=New-SelfSignedCertificate -Type Custom -Subject 'CN=XeniaRiffmasterLab' -KeyUsage DigitalSignature -CertStoreLocation 'Cert:\CurrentUser\My' -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3','2.5.29.19={text}') -NotAfter (Get-Date).AddYears(1)
@@ -76,7 +111,7 @@ Get-FileHash -Algorithm SHA256 $package | ForEach-Object {"$($_.Hash.ToLower()) 
 Copy-Item LICENSE,THIRD_PARTY_NOTICES.md xenia-artifacts/
 Copy-Item docs/INSTALL.md xenia-artifacts/INSTALL.md
 @"
-Beatles Rock Band Launcher 0.6.0.10, full source build.
+Beatles Rock Band Launcher 0.6.0.11, full source build.
 Upstream $upstream; patch $env:GITHUB_SHA.
 Full WGI buttons + native GameInput whammy/tilt; short polling snapshot; local shared log.
 Audio unregister releases global region before waiting on callback; retiring slots cannot be reused.
@@ -84,7 +119,8 @@ Audio clients are value initialized; callbacks refreshed under lifetime lock; pu
 UI suppresses guitar analog sensors only in frontend navigation; guest retains full whammy/tilt.
 Guitar UI neutral release ignores sensor axes only in the release check; held buttons still block.
 Whammy and tilt remain unchanged in guest state. Normal controller release rules unchanged.
-Direct launch and setup recovery added; console verification is recorded in the release notes.
+Native Xbox account selection maps to persistent offline local saves. Legacy single-profile state is staged and preserved before initialization.
+Native-account and story-save console verification is still required for this build.
 No game files, songs, charts, proprietary artwork or console captures are included.
 "@ | Set-Content xenia-artifacts/BUILD.txt
 Get-ChildItem xenia-artifacts -File | Where-Object {$_.Name -ne 'SHA256SUMS.txt'} | ForEach-Object { $hash=Get-FileHash -Algorithm SHA256 $_.FullName; "$($hash.Hash.ToLower())  $($_.Name)" } | Set-Content xenia-artifacts/SHA256SUMS.txt

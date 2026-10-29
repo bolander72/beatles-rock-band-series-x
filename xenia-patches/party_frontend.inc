@@ -32,19 +32,9 @@ bool EmulatorWindow::WinRTFrontendDialog::LaunchPartyGame(bool automatic) {
         : "The saved game could not be found. Reconnect its drive or choose a copy below.";
     return false;
   }
-  // A dedicated game tile should not require the emulator's profile wizard.
-  // Only create a local player when there are no accounts; existing profiles
-  // and their configured sign-in slots remain under the player's control.
-  auto* profiles = emulator_window_.emulator()->kernel_state()->xam_state()
-                       ->profile_manager();
-  if (!profiles->GetAccountCount()) {
-    if (!profiles->CreateProfile("Player 1", true) ||
-        !profiles->GetAccountCount()) {
-      party_status_ = "Could not create a local player. Open Advanced settings to set one up.";
-      return false;
-    }
-    XELOGI("Beatles launcher: created local Player 1 for offline saves");
-    config::SaveConfig();
+  if (!beatles::SignInConsoleAccounts(emulator_window_.emulator()->kernel_state())) {
+    party_status_ = "Select your Xbox account to open its local saved progress, then retry.";
+    return false;
   }
   auto* saved = dynamic_cast<cvar::ConfigVar<std::string>*>(
       cvar::ConfigVars->at("party_game"));
@@ -62,7 +52,6 @@ bool EmulatorWindow::WinRTFrontendDialog::LaunchPartyGame(bool automatic) {
 
 void EmulatorWindow::WinRTFrontendDialog::DrawPartyLauncher(ImGuiIO& io) {
   if (!party_scanned_) RefreshPartyGames();
-  DrawNoProfilePrompt(io);
   const bool accepts_input = !imgui_drawer()->GetIgnoreInput() &&
                             imgui_drawer()->GetDialogCount() == 1;
   const float scale = std::max(0.65f, io.DisplaySize.y / 1080.0f);

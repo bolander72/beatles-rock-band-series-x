@@ -26,17 +26,9 @@ auto GetGames(){return games;}void RefreshPaths(){}
 bool SameStoragePath(const std::string&a,const std::string&b){return beatles::PathKey(a)==beatles::PathKey(b);}
 }
 namespace xe::hid {struct X_INPUT_CAPABILITIES{int sub_type=6;};}
+namespace beatles {template<class Kernel>bool SignInConsoleAccounts(Kernel* state){++state->native_calls;return state->native_ok;}}
 namespace xe::app {
-struct Profiles {
- unsigned accounts=1,create_calls=0;bool create_ok=true,autologin=false;
- unsigned GetAccountCount(){return accounts;}
- bool CreateProfile(const std::string&name,bool login){
-  ++create_calls;assert(name=="Player 1");autologin=login;
-  if(!create_ok)return false;accounts=1;return true;
- }
-};
-struct Xam {Profiles p;Profiles*profile_manager(){return &p;}};
-struct Kernel{Xam x;Xam*xam_state(){return &x;}};
+struct Kernel{bool native_ok=true;unsigned native_calls=0;};
 struct Inputs{std::mutex m;auto lock(){return std::unique_lock<std::mutex>(m);}unsigned GetCapabilities(unsigned i,unsigned,hid::X_INPUT_CAPABILITIES*){return i==0?0:1167;}};
 struct Emu{Inputs in;Kernel k;Inputs*input_system(){return &in;}Kernel*kernel_state(){return &k;}};
 struct Drawer{bool GetIgnoreInput(){return false;}size_t GetDialogCount(){return 1;}};
@@ -48,7 +40,7 @@ struct EmulatorWindow {
   std::vector<std::string>party_games_;std::string party_status_,storage_path_status_;
   enum class StorageFolderTarget{kPrimaryGames};
   explicit WinRTFrontendDialog(EmulatorWindow&w):emulator_window_(w){}
-  Drawer*imgui_drawer(){return &d;}void DrawNoProfilePrompt(ImGuiIO&){}void PickStorageFolder(StorageFolderTarget){}
+  Drawer*imgui_drawer(){return &d;}void DrawNoProfilePrompt(ImGuiIO&){assert(false && "Local profile wizard must never appear");}void PickStorageFolder(StorageFolderTarget){}
   void RefreshPartyGames();bool LaunchPartyGame(bool automatic=false);void DrawPartyLauncher(ImGuiIO&);
  };
 };
@@ -67,32 +59,24 @@ int main(){
  put(0,0x58455832);put(4,1);put(8,64);put(20,1);put(24,0x00040006);put(28,32);put(44,beatles::kTitleId);
  {std::ofstream out(file,std::ios::binary);out.write(reinterpret_cast<const char*>(bytes.data()),bytes.size());}
  const auto encoded=file.u8string();const std::string game(encoded.begin(),encoded.end());
- // Exercise the actual automatic launch/profile path, not a mirrored model.
- UWP::games={{game,"Synthetic Beatles title metadata"}};
- cvars::party_game.clear();
- {
-  xe::app::EmulatorWindow w;w.e.k.x.p.accounts=0;
-  xe::app::EmulatorWindow::WinRTFrontendDialog d(w);
-  assert(d.LaunchPartyGame(true));assert(w.launches==1);
-  assert(w.e.k.x.p.create_calls==1 && w.e.k.x.p.autologin);
-  assert(d.LaunchPartyGame(true));assert(w.e.k.x.p.create_calls==1);
- }
- {
-  xe::app::EmulatorWindow w;w.e.k.x.p.accounts=0;w.e.k.x.p.create_ok=false;
-  xe::app::EmulatorWindow::WinRTFrontendDialog d(w);
-  assert(!d.LaunchPartyGame(true));assert(w.launches==0);
-  assert(d.party_status_.find("local player")!=std::string::npos);
- }
+ // Exercise the real automatic launch code with a native account backend double.
+ UWP::games={{game,"Synthetic Beatles title metadata"}};cvars::party_game.clear();
  {
   xe::app::EmulatorWindow w;
   xe::app::EmulatorWindow::WinRTFrontendDialog d(w);
-  assert(d.LaunchPartyGame(true));assert(w.e.k.x.p.create_calls==0);
+  assert(d.LaunchPartyGame(true));assert(w.launches==1 && w.e.k.native_calls==1);
+ }
+ {
+  xe::app::EmulatorWindow w;w.e.k.native_ok=false;
+  xe::app::EmulatorWindow::WinRTFrontendDialog d(w);
+  assert(!d.LaunchPartyGame(true));assert(w.launches==0 && w.e.k.native_calls==1);
+  assert(d.party_status_.find("Xbox account")!=std::string::npos);
  }
  {
   UWP::games.clear();cvars::party_game.clear();
-  xe::app::EmulatorWindow w;w.e.k.x.p.accounts=0;
+  xe::app::EmulatorWindow w;
   xe::app::EmulatorWindow::WinRTFrontendDialog d(w);
-  assert(!d.LaunchPartyGame(true));assert(w.e.k.x.p.create_calls==0);
+  assert(!d.LaunchPartyGame(true));assert(w.e.k.native_calls==0);
  }
  for(int mode=0;mode<4;++mode){
   const int w=mode==1?3840:1920,h=mode==1?2160:1080;
@@ -115,5 +99,5 @@ int main(){
   ImGui::DestroyContext();
  }
  std::filesystem::remove_all(root);
- puts("PASS: actual launcher UI at1080p/4K, one green/A press, yellow/Y advanced, missing files, App-mode guard, remembered selection, automatic offline player and creation failure");
+ puts("PASS: actual launcher UI at1080p/4K, one green/A press, yellow/Y advanced, missing files, App-mode guard, remembered selection, native account backend gate, no local-profile wizard");
 }

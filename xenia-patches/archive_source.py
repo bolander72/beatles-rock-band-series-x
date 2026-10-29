@@ -18,7 +18,9 @@ files = {Path(n.decode()) for n in tracked.split(b'\0') if n}
 files.update(Path('xenia-canary-uwp') / n for n in (
     'riffinput.cpp', 'riffinput.def', 'riffmaster_mapping.h',
     'riffmaster_full_mapping.h', 'riffmaster_slots.h', 'riffmaster_sensitivity.h',
-    'guitar_ui_release.h', 'party_launch.h', 'party_frontend.inc'))
+    'guitar_ui_release.h', 'party_launch.h', 'party_frontend.inc',
+    'console_accounts.h', 'console_accounts.cc', 'console_profiles.h',
+    'console_profile_storage.h', 'console_profile_migration.h'))
 with tarfile.open(a.output, 'w:gz') as archive:
     for relative in sorted(files):
         if relative.name == 'GameInput.h' or '.git' in relative.parts:
