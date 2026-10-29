@@ -1,12 +1,14 @@
 # Beatles Rock Band Launcher for Xbox Series X
 
+![The Beatles: Rock Band promotional artwork](artwork/banner.png)
+
 A community launcher for playing your own Xbox 360 copy of **The Beatles: Rock Band** in Xbox Developer Mode, powered by a customized [Xenia UWP](https://github.com/danprice142/xenia-canary-uwp) build.
 
 **Open the tile. The game starts.** The normal Xenia game browser is replaced by a small setup/recovery screen, and the Xbox Riffmaster is mapped automatically, including whammy and tilt.
 
 **Status: experimental, first launcher release in testing.** The underlying build has been played on Series X with one Xbox PDP Riffmaster. Direct launch is being verified before a downloadable release is published. This is an unofficial community project and still requires Developer Mode; it is not an official backward-compatible release or Microsoft Store product.
 
-No game files, music, charts, DLC, game artwork, console keys, or firmware are included. Supply your own game dump obtained and used as permitted where you live. This project does not download games.
+No game executables/data, music, charts, DLC, console keys, or firmware are included. Supply your own game dump obtained and used as permitted where you live. This project does not download games. The supplied promotional images in `artwork/` are separate from the code license; see [artwork notices](artwork/README.md).
 
 ## Start here
 
