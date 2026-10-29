@@ -19,11 +19,6 @@ void EmulatorWindow::WinRTFrontendDialog::RefreshPartyGames() {
 
 bool EmulatorWindow::WinRTFrontendDialog::LaunchPartyGame(bool automatic) {
   if (!party_scanned_) RefreshPartyGames();
-  if (automatic && !emulator_window_.emulator()->kernel_state()->xam_state()
-                         ->profile_manager()->GetAccountCount()) {
-    party_status_ = "Set up a local player, then select Play.";
-    return false;
-  }
   // A UWP App has too little memory for this game. Show setup, not an EDRAM crash.
   if (winrt::Windows::System::MemoryManager::AppMemoryUsageLimit() <
       uint64_t(4) * 1024 * 1024 * 1024) {
@@ -36,6 +31,20 @@ bool EmulatorWindow::WinRTFrontendDialog::LaunchPartyGame(bool automatic) {
         ? "Choose your game folder below. Game files are supplied separately."
         : "The saved game could not be found. Reconnect its drive or choose a copy below.";
     return false;
+  }
+  // A dedicated game tile should not require the emulator's profile wizard.
+  // Only create a local player when there are no accounts; existing profiles
+  // and their configured sign-in slots remain under the player's control.
+  auto* profiles = emulator_window_.emulator()->kernel_state()->xam_state()
+                       ->profile_manager();
+  if (!profiles->GetAccountCount()) {
+    if (!profiles->CreateProfile("Player 1", true) ||
+        !profiles->GetAccountCount()) {
+      party_status_ = "Could not create a local player. Open Advanced settings to set one up.";
+      return false;
+    }
+    XELOGI("Beatles launcher: created local Player 1 for offline saves");
+    config::SaveConfig();
   }
   auto* saved = dynamic_cast<cvar::ConfigVar<std::string>*>(
       cvar::ConfigVars->at("party_game"));

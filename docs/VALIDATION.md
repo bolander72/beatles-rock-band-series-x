@@ -6,6 +6,8 @@ On Xbox Series X with one Xbox PDP Riffmaster, the underlying build played sever
 
 An inconsistent 10–30 second intro-skip delay was still reported. The source input gate was reproduced waiting indefinitely for guitar sensor axes to center after host UI closed. Version 0.6.0.8 compiled successfully with a guitar-specific release fix; it preserves physical whammy/tilt state. The direct launcher includes that fix. Physical intro confirmation and direct-launch console verification remain pending for the first launcher release.
 
+Version 0.6.0.9 reached its setup screen and green/A started the verified game executable, but the first test remained on a solid blue screen during early guest startup. The failed-session log is preserved privately. This preview is not ready for a public binary release. Version 0.6.0.10 is being prepared to create an offline Player 1 automatically when no local account exists, avoiding the profile wizard and normal launcher screen. That convenience change is not evidence that the early startup hang is fixed.
+
 ## Automated checks
 
 - Synthetic XEX metadata: correct title, wrong title, DLL/patch rejection, truncated/malformed data, missing files, duplicate paths, remembered missing copy, and ambiguous copies.
@@ -21,7 +23,7 @@ An inconsistent 10–30 second intro-skip delay was still reported. The source i
 - [x] Windows launcher build passes (run 40938459908, source `eb673d4`).
 - [x] APPX contents, hashes, dependencies, notices and corresponding-source archive checked: 1,873 package blocks, 219 runtime imports, and 55,726 source-archive entries.
 - [x] Installed app display name is The Beatles: Rock Band (confirmed in Device Portal after registration).
-- [ ] App type Game and full memory limit verified.
+- [x] Persistent Game default survives reboot; 0.6.0.9 receives the full 5,120 MiB allowance after registration.
 - [ ] Cold tile launch opens Beatles without the Xenia browser.
 - [ ] Repeated launch uses the remembered game copy.
 - [ ] Setup is usable and Play works with green/A.

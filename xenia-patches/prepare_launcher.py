@@ -93,8 +93,8 @@ edit("src/xenia/kernel/XLiveAPI.cpp", 'DEFINE_int32(network_mode, 2,',
 edit("src/xenia/gpu/d3d12/pipeline_cache.cc", '    d3d12_pipeline_creation_threads, -1,',
      '    d3d12_pipeline_creation_threads, 2,')
 path = root / "xenia-canary-uwp/Package.appxmanifest"
-text = path.read_text().replace('Version="0.6.0.8"', 'Version="0.6.0.9"')
+text = path.read_text().replace('Version="0.6.0.8"', 'Version="0.6.0.10"')
 text = text.replace('Xenia Riffmaster Lab', 'The Beatles: Rock Band')
 text = text.replace('Local development', 'Community project')
 path.write_text(text)
-print("Prepared Beatles launcher 0.6.0.9: direct launch, verified XEX identity, recovery setup, offline defaults")
+print("Prepared Beatles launcher 0.6.0.10: direct launch, verified XEX identity, recovery setup, offline defaults")
