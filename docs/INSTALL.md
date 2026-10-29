@@ -16,6 +16,8 @@ Follow [Microsoft's Developer Mode activation instructions](https://learn.micros
 
 In Dev Home, open **Remote access** and enable Device Portal. Use the address shown on your Xbox in your Mac or PC browser. The address belongs to your console; examples from someone else's guide will not work. If the browser displays a certificate warning, inspect it yourself and follow Microsoft's local-device guidance.
 
+For a fresh setup with no developer apps or data to preserve, the tested allocation was **20 GB**: in Dev Home, press **Menu** (three lines) → **Manage dev storage**. Do this before installing apps if the current allocation is too small. Changing the allocation can erase developer apps and their local data; back up an existing setup first. This is storage for files, separate from the App type Game setting below.
+
 ## 2. Install the app
 
 1. Open this repository's **Releases** page and read the release's test status. Download the x64 launcher APPX and any required x64 Microsoft VCLibs dependency listed there. No game download is provided.
