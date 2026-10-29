@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**App exits, or game starts to a black screen:** First check Dev Home → app → View → Details → **App type: Game**. Updates may reset this. The launcher checks its memory allowance before normal automatic startup, but saved title-restart paths and advanced launches still require Game mode.
+**App exits, or game starts to a black screen:** First check Dev Home → app → View → Details → **App type: Game**. Updates may reset this. In App mode, initial graphics setup can fail before the launcher's recovery screen becomes available. Set the app's own type explicitly; a temporary global "Treat UWP apps as games" setting did not retain Game mode after that global setting was restored.
 
 **Setup says no game found:** Supply a complete extracted Xbox 360 copy, with `default.xex` and every accompanying file. Select Choose game folder or use the documented Development Files location, then Refresh. The direct launcher validates the title ID, so an ISO/ZIP or another game's executable will not be selected as Beatles.
 

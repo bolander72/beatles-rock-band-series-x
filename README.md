@@ -22,7 +22,7 @@ See the [step-by-step installation guide](docs/INSTALL.md), [instrument compatib
 ## What this changes
 
 - Direct launch with a remembered game location and title-ID validation.
-- A recovery screen for missing files, multiple copies, or App mode.
+- A recovery screen for missing files or multiple copies.
 - Xbox Riffmaster fret/strum/Menu/View input plus native whammy and tilt readings.
 - Stable player assignment and 150% default positive tilt gain, adjustable in local settings.
 - An audio callback lifetime fix for a reproduced deadlock.
