@@ -1,6 +1,8 @@
 # Troubleshooting
 
-**App exits, or game starts to a black screen:** First check Dev Home → app → View → Details → **App type: Game**. Updates may reset this. In App mode, initial graphics setup can fail before the launcher's recovery screen becomes available. Set the app's own type explicitly; a temporary global "Treat UWP apps as games" setting did not retain Game mode after that global setting was restored.
+**App exits, or game starts to a black screen:** First check Dev Home → app → View → Details → **App type: Game**. For future installs and updates, leave **Device Portal → Settings → Preference → Treat UWP apps as games by default** enabled; its value survived a reboot in the console test. An older explicit App assignment may need one final correction. In App mode, initial graphics setup can fail before the launcher's recovery screen becomes available.
+
+**Solid blue screen after Play:** An intermittent early-startup stall was observed on 0.6.0.9 with the full Game memory allowance. A full quit and relaunch reached the intro on the next attempt. That recovery is not a confirmed fix; the public binary release is held while startup is investigated.
 
 **Setup says no game found:** Supply a complete extracted Xbox 360 copy, with `default.xex` and every accompanying file. Select Choose game folder or use the documented Development Files location, then Refresh. The direct launcher validates the title ID, so an ISO/ZIP or another game's executable will not be selected as Beatles.
 

@@ -4,7 +4,7 @@
 
 A community launcher for playing your own Xbox 360 copy of **The Beatles: Rock Band** in Xbox Developer Mode, powered by a customized [Xenia UWP](https://github.com/danprice142/xenia-canary-uwp) build.
 
-**Open the tile. The game starts.** The normal Xenia game browser is replaced by a small setup/recovery screen, and the Xbox Riffmaster is mapped automatically, including whammy and tilt.
+**Open the tile. The game starts.** Normal startup goes directly to your configured game copy. A recovery screen is available when files need attention. The Xbox Riffmaster is mapped automatically, including whammy and tilt.
 
 **Status: experimental, first launcher release in testing.** The underlying build has been played on Series X with one Xbox PDP Riffmaster. Direct launch is being verified before a downloadable release is published. This is an unofficial community project and still requires Developer Mode; it is not an official backward-compatible release or Microsoft Store product.
 
@@ -13,10 +13,10 @@ No game executables/data, music, charts, DLC, console keys, or firmware are incl
 ## Start here
 
 1. Enable Xbox Developer Mode and open Xbox Device Portal from a browser on your Mac or PC.
-2. Download the x64 APPX from this project's **Releases** once a release is available. Install it through Device Portal with the Microsoft x64 VCLibs dependency if prompted.
-3. For a one-time default, enable **Device Portal → Settings → Preference → Treat UWP apps as games by default**, leave it on, and restart if prompted. An existing App assignment may need one final correction in Dev Home → launcher → **View** → **Details** → **App type: Game**. App mode does not provide the memory and input access this game needs.
+2. For a one-time default, enable **Device Portal → Settings → Preference → Treat UWP apps as games by default**, leave it on, and restart if prompted. An existing App assignment may need one final correction in Dev Home → launcher → **View** → **Details** → **App type: Game**. App mode does not provide the memory and input access this game needs.
+3. Once a release is available, download its **x64 install bundle** from this project's **Releases**. Install its APPX through Device Portal with the included Microsoft x64 VCLibs dependency if needed. The separate, larger **corresponding-source.tar.gz** is optional code for inspecting or rebuilding; players do not need it.
 4. Copy the complete extracted game folder to `D:/DevelopmentFiles/Games/xbox360/Beatles-Rock-Band`, keeping `default.xex` and the other files together. Alternatively, choose your game folder in the launcher's setup screen.
-5. Connect the Xbox Riffmaster's USB receiver, turn on the guitar, and open **The Beatles: Rock Band**. Complete the one-time local player/profile setup if prompted, then select **Play** with green/A. With a local profile and one valid game copy configured, later cold launches open the game directly.
+5. Connect the Xbox Riffmaster's USB receiver, turn on the guitar, and open **The Beatles: Rock Band**. The upcoming 0.6.0.10 build creates an offline **Player 1** automatically if no local profile exists, so a single valid game copy can open directly. Existing profiles are preserved. If recovery is shown, select the correct game copy and **Play** with green/A. Console verification is still in progress; see [validation](docs/VALIDATION.md).
 6. Use the game's calibration settings once for your TV and sound system. Controller mapping does not measure audio/video delay for you.
 
 See the [step-by-step installation guide](docs/INSTALL.md), [instrument compatibility](docs/COMPATIBILITY.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
