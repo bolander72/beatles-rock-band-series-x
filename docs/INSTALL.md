@@ -25,6 +25,8 @@ In Dev Home, open **Remote access** and enable Device Portal. Use the address sh
 
 ## 3. Add your game files
 
+Third-party listing supplied by the project owner: [Vimm's Lair game entry](https://vimm.net/vault/78877). **Availability unverified:** this exact address returned HTTP 404 when checked on October 29, 2026. It is not a confirmed download source. Check the source's permissions and the rules that apply to you before obtaining or using a game image; installing this launcher does not grant rights to the original game.
+
 The simplest layout is:
 
 ```text
