@@ -72,10 +72,14 @@ void EmulatorWindow::WinRTFrontendDialog::DrawPartyLauncher(ImGuiIO& io) {
                ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
   if (!accepts_input) flags |= ImGuiWindowFlags_NoInputs;
   ImGui::Begin("Beatles launch", nullptr, flags);
-  ImGui::SetWindowFontScale(1.5f * scale);
+  // Xenia already scales its font atlas for the screen width. Use a target
+  // pixel size here rather than scaling it a second time on a 4K display.
+  const float body_font_scale = 24.0f * scale /
+      std::max(1.0f, ImGui::GetFont()->FontSize * io.FontGlobalScale);
+  ImGui::SetWindowFontScale(body_font_scale * (40.0f / 24.0f));
   ImGui::TextUnformatted("THE BEATLES");
   ImGui::TextUnformatted("ROCK BAND");
-  ImGui::SetWindowFontScale(1.0f * scale);
+  ImGui::SetWindowFontScale(body_font_scale);
   ImGui::TextColored(ImVec4(0.55f, 0.82f, 0.72f, 1), "Community launcher  /  Xbox Developer Mode");
   ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
 
