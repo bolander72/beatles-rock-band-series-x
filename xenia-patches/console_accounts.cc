@@ -84,7 +84,10 @@ IAsyncAction PrepareStorageAsync() {
     if (!IsPersistentUser(user)) continue;
     const auto id = to_string(user.NonRoamableId());
     if (!ValidConsoleId(id)) throw std::runtime_error("Xbox returned an invalid local account identity.");
-    console_users.push_back({user, id, to_string(co_await ConsoleDisplayName(user))});
+    // Keep suspension outside aggregate initialization: MSVC 14.44 crashes
+    // generating code for the nested co_await, even without optimization.
+    const auto display_name = co_await ConsoleDisplayName(user);
+    console_users.push_back({user, id, to_string(display_name)});
   }
   const auto shared = ApplicationData::Current().LocalFolder();
   const fs::path target(shared.Path().c_str());
