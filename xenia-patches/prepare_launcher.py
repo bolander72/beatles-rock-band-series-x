@@ -96,6 +96,16 @@ edit("src/xenia/kernel/XLiveAPI.cpp", 'DEFINE_int32(network_mode, 2,',
 edit("src/xenia/gpu/d3d12/pipeline_cache.cc", '    d3d12_pipeline_creation_threads, -1,',
      '    d3d12_pipeline_creation_threads, 2,')
 edit("xenia-canary-uwp/CMakeLists.txt", "  App.cpp\n", "  App.cpp\n  console_accounts.cc\n")
+edit("xenia-canary-uwp/CMakeLists.txt", "# Keep all upstream app dialogs, including netplay, in the packaged app.",
+     '''# MSVC 14.44 crashes in PrepareStorageAsync during link-time code generation.
+# Emit this setup-only coroutine service as native code instead. The emulator,
+# input adapter and gameplay code retain their normal release optimizations.
+if(MSVC)
+  set_property(SOURCE console_accounts.cc APPEND PROPERTY COMPILE_OPTIONS
+    "$<$<CONFIG:Release>:/GL->")
+endif()
+
+# Keep all upstream app dialogs, including netplay, in the packaged app.''')
 edit("xenia-canary-uwp/App.cpp", '#include "XeniaUWP.h"',
      '#include "XeniaUWP.h"\n#include "console_accounts.h"')
 edit("xenia-canary-uwp/App.cpp", '    UWP::StartXenia();',
