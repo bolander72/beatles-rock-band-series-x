@@ -8,7 +8,7 @@ An inconsistent 10–30 second intro-skip delay was reported. The source input g
 
 The first 0.6.0.9 Play attempt remained on a solid blue screen during early guest startup. A subsequent launch reached the game. Version 0.6.0.10 automatically creates an offline Player 1 when no local account exists. Three full quit-and-reopen launches through Device Portal reached the actual animated intro without any controller input, profile selection or Play screen. The second and third session logs show the same local profile loaded into slot 0, successful audio registration and the full 5,120 MiB Game allowance. Existing sensor settings were preserved byte-for-byte. These checks used the existing game files and shader cache. The earlier blue stall did not recur in these three checks; its root cause has not been established.
 
-The local profile persisted, but story progress has not yet been saved and reloaded in this build. A separate diagnostic successfully enumerated a native signed-in Xbox account and reported support for the native account picker. That does not yet provide native account association in the launcher. Independent second-guitar routing and USB microphone capture are still implementation work.
+The local profile persisted, but story progress has not yet been saved and reloaded in this build. A separate diagnostic successfully enumerated a native signed-in Xbox account and reported support for the native account picker. Development version 0.6.0.11 implements account association and state migration; these still need console verification. Diagnostic enumeration alone does not prove account selection, ownership or game save/reload. Independent second-guitar routing and USB microphone capture are still implementation work.
 
 ## Automated checks
 

@@ -20,7 +20,7 @@ The tested guitar is the **Xbox** PDP Riffmaster with its matching USB receiver.
 
 The bridge currently selects one matching Riffmaster. It does not distinguish and route two independent Riffmasters. Do not assume this release supports a full band just because single-guitar Quick Play works.
 
-Version 0.6.0.10 uses an emulated offline local profile. A separate console diagnostic can enumerate a signed-in native Xbox user and reports native account-picker support, but account-to-save binding is not implemented in the launcher. Xbox Live authentication and cloud saves are not supplied.
+Version 0.6.0.10 uses an emulated offline local profile. Development version 0.6.0.11 implements native console-account selection and association with offline save profiles, but it is not yet console-verified or released. A separate diagnostic has enumerated a signed-in native Xbox user and reports native account-picker support; that alone does not verify selection, save ownership or story-save reload in the game. See [native account verification](NATIVE-ACCOUNT-TESTING.md). Xbox Live authentication and cloud saves are not supplied.
 
 Whammy and tilt are preserved as separate analog values. Positive tilt is scaled to 150% by default to make ordinary upright movement sufficient; the mapping clamps to the normal range. The audio/video calibration for a specific TV and speaker setup still belongs in the game's calibration menu.
 
