@@ -11,6 +11,11 @@ __pycache__/
 *.exe
 .DS_Store
 /game-transfer/
+/tools/compiler_probe/base/
+/tools/compiler_probe/split-await/
+/tools/compiler_probe/results/
+/tools/compiler_probe/objects/
+/tools/compiler_probe/compile-probe.cmd
 *.iso
 *.xex
 *.ark

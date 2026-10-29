@@ -1,0 +1,31 @@
+name: Probe native account compiler crash
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compiler-probe:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Extract the actual coroutine and an isolated expression variant
+        shell: pwsh
+        run: |
+          python tools/compiler_probe/prepare_probe.py --source xenia-patches --output tools/compiler_probe/base
+          if($LASTEXITCODE -ne 0){throw 'Base probe extraction failed'}
+          python tools/compiler_probe/prepare_probe.py --source xenia-patches --output tools/compiler_probe/split-await --split-await
+          if($LASTEXITCODE -ne 0){throw 'Alternate probe extraction failed'}
+      - name: Compile and link only; never execute the generated programs
+        shell: pwsh
+        run: ./tools/compiler_probe/run-probe.ps1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-account-compiler-probe
+          path: |
+            tools/compiler_probe/results/*.log
+            tools/compiler_probe/results/report.json
+            tools/compiler_probe/base/probe.cc
+            tools/compiler_probe/split-await/probe.cc
+          retention-days: 7
