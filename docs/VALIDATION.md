@@ -18,9 +18,9 @@ An inconsistent 10–30 second intro-skip delay was still reported. The source i
 
 ## First-launcher release checklist
 
-- [ ] Windows launcher build passes.
-- [ ] APPX contents, hashes, dependencies, notices and corresponding-source archive checked.
-- [ ] Xbox tile displays The Beatles: Rock Band.
+- [x] Windows launcher build passes (run 40938459908, source `eb673d4`).
+- [x] APPX contents, hashes, dependencies, notices and corresponding-source archive checked: 1,873 package blocks, 219 runtime imports, and 55,726 source-archive entries.
+- [x] Installed app display name is The Beatles: Rock Band (confirmed in Device Portal after registration).
 - [ ] App type Game and full memory limit verified.
 - [ ] Cold tile launch opens Beatles without the Xenia browser.
 - [ ] Repeated launch uses the remembered game copy.

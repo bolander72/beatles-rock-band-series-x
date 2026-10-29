@@ -14,7 +14,7 @@ No game executables/data, music, charts, DLC, console keys, or firmware are incl
 
 1. Enable Xbox Developer Mode and open Xbox Device Portal from a browser on your Mac or PC.
 2. Download the x64 APPX from this project's **Releases** once a release is available. Install it through Device Portal with the Microsoft x64 VCLibs dependency if prompted.
-3. In Dev Home, highlight the launcher → **View** (two overlapping squares) → **Details** → **App type: Game**. This matters: App mode does not provide the memory and input access this game needs.
+3. For a one-time default, enable **Device Portal → Settings → Preference → Treat UWP apps as games by default**, leave it on, and restart if prompted. An existing App assignment may need one final correction in Dev Home → launcher → **View** → **Details** → **App type: Game**. App mode does not provide the memory and input access this game needs.
 4. Copy the complete extracted game folder to `D:/DevelopmentFiles/Games/xbox360/Beatles-Rock-Band`, keeping `default.xex` and the other files together. Alternatively, choose your game folder in the launcher's setup screen.
 5. Connect the Xbox Riffmaster's USB receiver, turn on the guitar, and open **The Beatles: Rock Band**. Complete the one-time local player/profile setup if prompted, then select **Play** with green/A. With a local profile and one valid game copy configured, later cold launches open the game directly.
 6. Use the game's calibration settings once for your TV and sound system. Controller mapping does not measure audio/video delay for you.

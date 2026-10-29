@@ -18,12 +18,14 @@ In Dev Home, open **Remote access** and enable Device Portal. Use the address sh
 
 For a fresh setup with no developer apps or data to preserve, the tested allocation was **20 GB**: in Dev Home, press **Menu** (three lines) → **Manage dev storage**. Do this before installing apps if the current allocation is too small. Changing the allocation can erase developer apps and their local data; back up an existing setup first. This is storage for files, separate from the App type Game setting below.
 
+To avoid repeatedly selecting Game after updates, enable **Device Portal → Settings → Preference → Treat UWP apps as games by default**, and **leave it enabled**. Restart the console if prompted. This sets the default for developer UWP apps on that console; it is not a setting the launcher can force from inside its package. An app installed earlier or explicitly assigned App may still need a one-time Details → Game correction.
+
 ## 2. Install the app
 
 1. Open this repository's **Releases** page and read the release's test status. Download the x64 launcher APPX and any required x64 Microsoft VCLibs dependency listed there. No game download is provided.
 2. In Device Portal → **Home**, choose **Add** under installed apps.
 3. Select the launcher APPX. Add the Microsoft x64 VCLibs dependency if Device Portal requests it and it is not already installed. Finish registration.
-4. On the TV, in Dev Home, highlight **The Beatles: Rock Band**, press **View** (two overlapping squares), choose **Details**, and set **App type** to **Game**. Check this after updates too. App mode has a lower memory limit and may deny the native instrument input focus needed here.
+4. With the persistent default enabled before installation, the app should inherit **Game**. If it was already installed as App, correct it once: on the TV in Dev Home, highlight **The Beatles: Rock Band** → **View** (two overlapping squares) → **Details** → **App type: Game**. App mode has a lower memory limit and may deny the native instrument input focus needed here.
 
 ## 3. Add your game files
 
@@ -41,7 +43,7 @@ Use Device Portal's Development Files area or another storage transfer method su
 
 For the browser transfer method used on the tested Mac setup:
 
-1. Download this repository's source ZIP from **Code → Download ZIP**, and extract it. Python 3 is needed only for this optional local packaging helper.
+1. The install bundle already includes `tools/prepare_game.py`. Python 3 is needed only for this optional local packaging helper. If you downloaded a bare APPX instead, get the small repository ZIP from **Code → Download ZIP** for the helper. **The large `corresponding-source.tar.gz` release asset is not needed for installation or game-file preparation.**
 2. In Terminal, run the following with your own paths. The first path is this project's downloaded `tools/prepare_game.py`; the game path points to the complete extracted game folder. Choose a new output folder outside the game folder.
 
    ```sh
