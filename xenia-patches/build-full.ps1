@@ -118,6 +118,10 @@ Native-account and story-save console verification is still required for this bu
 No game files, songs, charts, proprietary artwork or console captures are included.
 "@ | Set-Content xenia-artifacts/BUILD.txt
 Get-ChildItem xenia-artifacts -File | Where-Object {$_.Name -ne 'SHA256SUMS.txt'} | ForEach-Object { $hash=Get-FileHash -Algorithm SHA256 $_.FullName; "$($hash.Hash.ToLower())  $($_.Name)" } | Set-Content xenia-artifacts/SHA256SUMS.txt
-# Symbols stay private in a separate artifact to support crash analysis.
+# Developer symbols are separate from the player install bundle. This public
+# repository's Actions artifacts are developer downloads, not private storage.
 New-Item xenia-symbols -ItemType Directory -Force | Out-Null
 Get-ChildItem xenia-source/build/uwp/bin -Recurse -Filter *.pdb | Where-Object {$_.Name -in @('xeniacanary.pdb','xenia-uwp.pdb','riffinput.pdb')} | ForEach-Object {Copy-Item $_.FullName xenia-symbols/ -Force}
+if(!(Test-Path xenia-symbols/riffinput.pdb) -or
+   (!(Test-Path xenia-symbols/xeniacanary.pdb) -and !(Test-Path xenia-symbols/xenia-uwp.pdb))){throw 'Matching emulator or instrument debug symbols missing'}
+Get-ChildItem xenia-symbols -Filter *.pdb | ForEach-Object { $hash=Get-FileHash -Algorithm SHA256 $_.FullName; "$($hash.Hash.ToLower())  $($_.Name)" } | Set-Content xenia-symbols/SHA256SUMS.txt

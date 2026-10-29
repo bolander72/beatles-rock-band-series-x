@@ -10,7 +10,9 @@
 #include <tuple>
 #include <vector>
 #define XELOGI(...) ((void)0)
+#define XE_PLATFORM_WINRT 1
 constexpr unsigned X_INPUT_FLAG_GAMEPAD=1,X_ERROR_SUCCESS=0,X_STATUS_SUCCESS=0;
+constexpr unsigned X_STATUS_ACCESS_DENIED=0xC0000022;
 namespace cvars {std::string party_game;bool party_autolaunch=true;}
 namespace cvar {
 struct Base {virtual ~Base()=default;};
@@ -33,7 +35,11 @@ struct Inputs{std::mutex m;auto lock(){return std::unique_lock<std::mutex>(m);}u
 struct Emu{Inputs in;Kernel k;Inputs*input_system(){return &in;}Kernel*kernel_state(){return &k;}};
 struct Drawer{bool GetIgnoreInput(){return false;}size_t GetDialogCount(){return 1;}};
 struct EmulatorWindow {
- Emu e;unsigned launches=0;Emu*emulator(){return &e;}unsigned RunTitle(const std::filesystem::path&){++launches;return 0;}
+ Emu e;Emu*emulator_=&e;unsigned launches=0;Emu*emulator(){return &e;}
+ unsigned RunTitle(const std::filesystem::path&){
+#include "console_title_account_guard.inc"
+  ++launches;return 0;
+ }
  class WinRTFrontendDialog {
  public:
   EmulatorWindow&emulator_window_;Drawer d;bool party_scanned_=false,party_focus_=true,party_advanced_=false;int party_selected_=0;
@@ -61,6 +67,20 @@ int main(){
  const auto encoded=file.u8string();const std::string game(encoded.begin(),encoded.end());
  // Exercise the real automatic launch code with a native account backend double.
  UWP::games={{game,"Synthetic Beatles title metadata"}};cvars::party_game.clear();
+ {
+  // Restarts and protocol launches enter RunTitle without the party frontend.
+  xe::app::EmulatorWindow w;w.e.k.native_ok=false;
+  if(w.RunTitle(file)!=X_STATUS_ACCESS_DENIED || w.launches!=0 || w.e.k.native_calls!=1){
+   puts("FAIL: direct title boot bypasses the console-account gate");return 1;
+  }
+ }
+ {
+  xe::app::EmulatorWindow w;
+  assert(w.RunTitle(file)==X_STATUS_SUCCESS && w.launches==1 && w.e.k.native_calls==1);
+  // A later boot must recheck the account, rather than trusting an earlier one.
+  w.e.k.native_ok=false;
+  assert(w.RunTitle(file)==X_STATUS_ACCESS_DENIED && w.launches==1 && w.e.k.native_calls==2);
+ }
  {
   xe::app::EmulatorWindow w;
   xe::app::EmulatorWindow::WinRTFrontendDialog d(w);
@@ -99,5 +119,5 @@ int main(){
   ImGui::DestroyContext();
  }
  std::filesystem::remove_all(root);
- puts("PASS: actual launcher UI at1080p/4K, one green/A press, yellow/Y advanced, missing files, App-mode guard, remembered selection, native account backend gate, no local-profile wizard");
+ puts("PASS: common title account guard accepts/rejects/rechecks direct boots; actual launcher UI at1080p/4K, one green/A press, yellow/Y advanced, missing files, App-mode guard, remembered selection, no local-profile wizard");
 }

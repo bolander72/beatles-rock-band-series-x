@@ -6,6 +6,8 @@ Version 0.6.0.11 is development work, not a published or console-verified releas
 
 The app reads signed-in console users through `Windows.System.User` and uses Xbox's own account picker when a selection is needed. An account's opaque, app-specific ID selects its local save identity. Display-name changes do not create a new save. The local profile label may differ from the console gamertag.
 
+The account check runs in the common title-launch path, including saved restarts and protocol launches. It refreshes the signed-in user list before each boot. The setup frontend stays hidden while initial account loading runs.
+
 The manifest adds `userAccountInformation` and changes the app to support multiple users. Account IDs and the local association file stay in app storage. The integration does not add microphone capture or an online account service.
 
 Before the emulator opens its configuration, the app stages existing per-user state into shared app storage. The original files remain in place. An existing single local profile is associated with the console account owning its previous app-data folder. Several prior save sets or several unassociated local profiles require explicit migration; the app stops rather than guessing an owner. A completed migration is not repeated over newer shared progress.

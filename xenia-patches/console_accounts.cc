@@ -109,8 +109,9 @@ IAsyncAction PrepareStorageAsync() {
     fs::path source;
     ConsoleProfileLinks owners;
     if (!sources.empty()) { source = sources.front().first; owners = LegacyProfiles(source, sources.front().second); }
-    // File copying uses the existing broad filesystem capability. It runs
-    // before any emulator config, cache or ProfileManager is opened.
+    // These are this package's per-user and shared app-data folders. Xbox
+    // access must be verified; broadFileSystemAccess is unsupported there.
+    // Copying precedes emulator config, cache and ProfileManager initialization.
     co_await resume_background();
     migrated = MigrateConsoleState(source, target, owners);
   }
@@ -154,7 +155,14 @@ IAsyncAction BindUserAsync(xe::kernel::KernelState* state, User user, uint8_t sl
   XELOGI("Beatles console account associated with local save slot {}", slot);
 }
 IAsyncAction BootstrapAccountsAsync(xe::kernel::KernelState* state, std::stop_token stop) {
-  std::vector<ConsoleUser> users = console_users;
+  // A restart may follow a console sign-in/out; do not reuse the startup list.
+  const auto live_users = co_await User::FindAllAsync();
+  if (stop.stop_requested()) throw hresult_canceled();
+  std::vector<ConsoleUser> users;
+  for (const auto& user : live_users) {
+    if (!IsPersistentUser(user)) continue;
+    users.push_back({user, to_string(user.NonRoamableId()), ""});
+  }
   std::sort(users.begin(), users.end(), [](const auto& a, const auto& b) { return a.id < b.id; });
   auto primary = std::find_if(users.begin(), users.end(), [](const auto& user) { return user.id == activating_user; });
   User selected{nullptr};

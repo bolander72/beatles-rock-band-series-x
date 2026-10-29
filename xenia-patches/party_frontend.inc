@@ -32,10 +32,6 @@ bool EmulatorWindow::WinRTFrontendDialog::LaunchPartyGame(bool automatic) {
         : "The saved game could not be found. Reconnect its drive or choose a copy below.";
     return false;
   }
-  if (!beatles::SignInConsoleAccounts(emulator_window_.emulator()->kernel_state())) {
-    party_status_ = "Select your Xbox account to open its local saved progress, then retry.";
-    return false;
-  }
   auto* saved = dynamic_cast<cvar::ConfigVar<std::string>*>(
       cvar::ConfigVars->at("party_game"));
   saved->SetConfigValue(target);
@@ -43,7 +39,9 @@ bool EmulatorWindow::WinRTFrontendDialog::LaunchPartyGame(bool automatic) {
   XELOGI("Beatles launcher: opening verified title 454108B1");
   const auto result = emulator_window_.RunTitle(std::filesystem::u8path(target));
   if (result != X_STATUS_SUCCESS) {
-    party_status_ = "The game could not start. Check its files or open Advanced settings.";
+    party_status_ = result == X_STATUS_ACCESS_DENIED
+        ? "Select your Xbox account to open its local saved progress, then retry."
+        : "The game could not start. Check its files or open Advanced settings.";
     return false;
   }
   party_status_.clear();

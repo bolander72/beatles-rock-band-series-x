@@ -17,9 +17,22 @@ def edit(relative, old, new):
 
 for name in ("party_launch.h", "party_frontend.inc", "console_accounts.h",
              "console_accounts.cc", "console_profiles.h", "console_profile_storage.h",
-             "console_profile_migration.h"):
+             "console_profile_migration.h", "console_title_account_guard.inc"):
     shutil.copy2(patches / name, root / "xenia-canary-uwp" / name)
 generate(root / "xenia-canary-uwp/Assets")
+
+edit("src/xenia/app/emulator_window.cc",
+     '''#if XE_PLATFORM_WINRT
+  if (gamelist_) gamelist_->StopVideoBackground();''',
+     '''#include "xenia-canary-uwp/console_title_account_guard.inc"
+
+#if XE_PLATFORM_WINRT
+  if (gamelist_) gamelist_->StopVideoBackground();''')
+boot_source = (root / "src/xenia/app/emulator_window.cc").read_text()
+boot_entry = boot_source.index("xe::X_STATUS EmulatorWindow::RunTitle(")
+boot_guard = boot_source.index('#include "xenia-canary-uwp/console_title_account_guard.inc"')
+guest_launch = boot_source.index("  auto result = emulator_->LaunchPath(abs_path);", boot_entry)
+assert boot_entry < boot_guard < guest_launch
 
 edit("src/xenia/app/emulator_window.cc",
      '#include "xenia-canary-uwp/game_storage.h"',
