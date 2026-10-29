@@ -120,7 +120,10 @@ void EmulatorWindow::WinRTFrontendDialog::DrawPartyLauncher(ImGuiIO& io) {
   ImGui::BeginDisabled(party_games_.empty() || !accepts_input);
   play = ImGui::Button("Play  [Green / A]", ImVec2(-1, 72 * scale));
   if (party_focus_ && accepts_input && !party_games_.empty()) {
-    ImGui::SetItemDefaultFocus(); party_focus_ = false;
+    ImGui::SetItemDefaultFocus();
+    ImGui::SetKeyboardFocusHere(-1);
+    ImGui::SetNavCursorVisible(true);
+    party_focus_ = false;
   }
   ImGui::EndDisabled();
   if (ImGui::Button("Choose game folder", ImVec2(330 * scale, 54 * scale))) {

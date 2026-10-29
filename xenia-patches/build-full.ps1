@@ -30,12 +30,19 @@ cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\party_launch_test.cc /Fe:build
 if errorlevel 1 exit /b 1
 build\party-launch-test.exe
 if errorlevel 1 exit /b 1
+if not exist build\party-ui mkdir build\party-ui
+cl /nologo /std:c++17 /EHsc /W3 /D_CRT_SECURE_NO_WARNINGS /Ixenia-source\third_party\imgui /Ixenia-patches xenia-patches\party_ui_test.cc xenia-source\third_party\imgui\imgui.cpp xenia-source\third_party\imgui\imgui_draw.cpp xenia-source\third_party\imgui\imgui_widgets.cpp xenia-source\third_party\imgui\imgui_tables.cpp /Fo:build\party-ui\ /Fe:build\party-ui-test.exe /link user32.lib imm32.lib
+if errorlevel 1 exit /b 1
+build\party-ui-test.exe
+if errorlevel 1 exit /b 1
 python xenia-patches/test_guitar_ui_release.py --source xenia-source --compiler cl --work build/guitar-release-tests
 exit /b %errorlevel%
 "@
 Set-Content build/tests.cmd $compile
 cmd /d /c "$root\build\tests.cmd"
 if($LASTEXITCODE -ne 0){throw 'Full mapping checks failed'}
+python xenia-patches/archive_source.py xenia-source xenia-artifacts/corresponding-source.tar.gz
+if($LASTEXITCODE -ne 0){throw 'Corresponding source archive failed'}
 Set-Location xenia-source
 cmake --preset uwp
 if($LASTEXITCODE -ne 0){throw 'UWP configure failed'}
@@ -68,8 +75,6 @@ Get-ChildItem xenia-source/build/uwp/xenia-canary-uwp/AppPackages -Filter Micros
 Get-FileHash -Algorithm SHA256 $package | ForEach-Object {"$($_.Hash.ToLower())  $([IO.Path]::GetFileName($_.Path))"} | Set-Content xenia-artifacts/SHA256SUMS.txt
 Copy-Item LICENSE,THIRD_PARTY_NOTICES.md xenia-artifacts/
 Copy-Item docs/INSTALL.md xenia-artifacts/INSTALL.md
-python xenia-patches/archive_source.py xenia-source xenia-artifacts/corresponding-source.tar.gz
-if($LASTEXITCODE -ne 0){throw 'Corresponding source archive failed'}
 @"
 Beatles Rock Band Launcher 0.6.0.9, full source build.
 Upstream $upstream; patch $env:GITHUB_SHA.
