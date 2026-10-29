@@ -1,0 +1,14 @@
+name: Check local transfer helper
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tools/**', 'tests/**', '.github/workflows/tools.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python3 -m unittest discover -s tests -v

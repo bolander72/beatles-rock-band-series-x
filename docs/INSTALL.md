@@ -35,7 +35,22 @@ D:/DevelopmentFiles/Games/xbox360/Beatles-Rock-Band/
     [all other files and folders from your extracted game]
 ```
 
-Use Device Portal's Development Files area or another storage transfer method supported by your setup. Keep every file's relative location intact. A bare `default.xex` is not the whole game. This project neither supplies game files nor downloads them for you.
+Use Device Portal's Development Files area or another storage transfer method supported by your setup. Keep every file's relative location intact. A bare `default.xex` is not the whole game.
+
+For the browser transfer method used on the tested Mac setup:
+
+1. Download this repository's source ZIP from **Code → Download ZIP**, and extract it. Python 3 is needed only for this optional local packaging helper.
+2. In Terminal, run the following with your own paths. The first path is this project's downloaded `tools/prepare_game.py`; the game path points to the complete extracted game folder. Choose a new output folder outside the game folder.
+
+   ```sh
+   python3 "/path/to/project/tools/prepare_game.py" "/path/to/Beatles-Rock-Band" --output "/path/to/beatles-transfer"
+   ```
+
+3. In Device Portal → **File explorer → DevelopmentFiles**, upload each generated `beatles-game-part-XX.zip` in order. Wait for the uploaded/extracted success message before the next file. The ZIP paths create `Games/xbox360/Beatles-Rock-Band` underneath DevelopmentFiles. Do not upload them into an already nested game folder.
+4. The helper groups around 1 GiB per archive; a larger individual game file gets its own ZIP and remains intact. This mirrors the tested transfer approach. It uses no network and does not change the source game files. You need additional local free space roughly equal to the game folder's size for the ZIPs.
+5. Open the game tile after all archives finish. If setup is already open, select **Refresh**.
+
+If you start with an ISO, first extract your game image with a suitable tool such as the open-source [XboxDev extract-xiso](https://github.com/XboxDev/extract-xiso), following that project's instructions. The transfer helper packages an already extracted folder; it does not extract or download ISOs. Keep generated game-transfer ZIPs private; they are not release assets for this repository.
 
 You can instead keep an extracted copy on accessible storage and select **Choose game folder** in the launcher. It remembers the chosen location. With multiple copies, select the desired copy before Play. The launcher validates the executable's title ID (`454108B1`) before automatic launch.
 

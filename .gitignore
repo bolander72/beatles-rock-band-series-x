@@ -10,3 +10,8 @@ __pycache__/
 *.obj
 *.exe
 .DS_Store
+/game-transfer/
+*.iso
+*.xex
+*.ark
+*.hdr
