@@ -5,7 +5,8 @@ from pathlib import Path
 
 root = Path(sys.argv[1]).resolve()
 patches = Path(__file__).resolve().parent
-shutil.copy2(patches / 'audio_diagnostics.h', root / 'xenia-canary-uwp/audio_diagnostics.h')
+for name in ('audio_diagnostics.h', 'calibration_restore.h', 'calibration_restore_storage.h'):
+    shutil.copy2(patches / name, root / 'xenia-canary-uwp' / name)
 
 
 def edit(name, old, new):
@@ -16,10 +17,11 @@ def edit(name, old, new):
 
 
 edit('xenia-canary-uwp/console_accounts.cc', '#include "console_accounts.h"',
-     '#include "console_accounts.h"\n#include "audio_diagnostics.h"')
+     '#include "console_accounts.h"\n#include "audio_diagnostics.h"\n#include "calibration_restore_storage.h"')
 edit('xenia-canary-uwp/console_accounts.cc',
      '  if (next != links) co_await WriteConsoleLinksAsync(shared, links, next);\n}',
      '''  if (next != links) co_await WriteConsoleLinksAsync(shared, links, next);
+  co_await ApplyCalibrationRestoreAsync(shared);
   if (ReadAudioDiagnosticConfig().enabled) SnapshotAudioDiagnosticState(target);
 }''')
 edit('src/xenia/base/logging.cc', '#include "xenia/base/logging.h"',
@@ -47,7 +49,7 @@ edit('src/xenia/apu/audio_system.cc',
   const auto diagnostic = beatles::ReadAudioDiagnosticConfig();
   maximum_queued_frames_ = static_cast<int>(diagnostic.queued_frames);
   if (diagnostic.enabled) {
-    XELOGI("Beatles audio diagnostic enabled; output queue limit={} frames", maximum_queued_frames_);
+    XELOGI("Beatles audio diagnostic enabled; output queue limit={} frames; host_frequency={} guest_frequency={}", maximum_queued_frames_, xe::Clock::QueryHostTickFrequency(), xe::Clock::guest_tick_frequency());
   }
 #endif''')
 path = root / 'src/xenia/apu/audio_system.cc'
