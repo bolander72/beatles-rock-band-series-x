@@ -175,10 +175,10 @@ edit("src/xenia/kernel/xam/xam_ui.cc", '''  return xeXamDispatchDialogAsync<ui::
 #endif
 }''')
 path = root / "xenia-canary-uwp/Package.appxmanifest"
-text = path.read_text().replace('Version="0.6.0.8"', 'Version="0.6.0.13"')
+text = path.read_text().replace('Version="0.6.0.8"', 'Version="0.6.0.14"')
 text = text.replace('Xenia Riffmaster Lab', 'The Beatles: Rock Band')
 text = text.replace('Local development', 'Community project')
 text = text.replace('  </Properties>', '    <uap:SupportedUsers>multiple</uap:SupportedUsers>\n  </Properties>')
 text = text.replace('  <Capabilities>', '  <Capabilities>\n    <uap:Capability Name="userAccountInformation" />')
 path.write_text(text)
-print("Prepared Beatles launcher 0.6.0.13: native console account selection, preserved local saves, direct startup")
+print("Prepared Beatles launcher 0.6.0.14: native console account selection, preserved local saves, direct startup")

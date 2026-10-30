@@ -19,6 +19,10 @@ python xenia-patches/prepare_audio_diagnostics.py xenia-source
 if($LASTEXITCODE){throw "Audio diagnostics source preparation failed"}
 python xenia-patches/prepare_clock_precision.py xenia-source
 if($LASTEXITCODE){throw "Clock precision source preparation failed"}
+Copy-Item xenia-source/src/xenia/apu/audio_system.cc build/audio_capacity.original.cc
+Copy-Item xenia-source/src/xenia/apu/xaudio2/xaudio2_audio_driver.cc build/xaudio2_capacity.original.cc
+python xenia-patches/prepare_audio_capacity.py xenia-source
+if($LASTEXITCODE){throw "Audio capacity source preparation failed"}
 $vswhere="${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 $vs=& $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 $compile=@"
@@ -43,6 +47,12 @@ build\console-profile-migration-test.exe
 if errorlevel 1 exit /b 1
 python xenia-patches/test_clock_precision.py --original build/clock.original.cc --patched xenia-source/src/xenia/base/clock.cc --compiler cl --work build/clock-tests
 if errorlevel 1 exit /b 1
+python xenia-patches/test_audio_capacity.py --original build/audio_capacity.original.cc --patched xenia-source/src/xenia/apu/audio_system.cc --compiler cl --work build/audio-capacity-tests
+if errorlevel 1 exit /b 1
+python xenia-patches/test_audio_submit_failure.py --original build/xaudio2_capacity.original.cc --patched xenia-source/src/xenia/apu/xaudio2/xaudio2_audio_driver.cc --compiler cl --work build/audio-submit-tests
+if errorlevel 1 exit /b 1
+
+
 cl /nologo /std:c++17 /EHsc /W4 /WX xenia-patches\calibration_restore_test.cc /Fe:build\calibration-restore-test.exe
 if errorlevel 1 exit /b 1
 build\calibration-restore-test.exe
@@ -98,7 +108,7 @@ Set-Location $root
 # Repack to include the explicitly loaded input DLL even if the VS packager
 # omits an import library whose exports are all resolved dynamically.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory("$root\xenia-source\build\uwp\release\Xenia-Netplay-0.6.0.13.appx","$root\full-layout")
+[IO.Compression.ZipFile]::ExtractToDirectory("$root\xenia-source\build\uwp\release\Xenia-Netplay-0.6.0.14.appx","$root\full-layout")
 $adapter=Get-ChildItem xenia-source/build/uwp -Recurse -Filter riffinput.dll | Where-Object {$_.FullName -match 'Release'} | Select-Object -First 1
 if(!$adapter){throw 'Built input adapter missing'}
 Copy-Item $adapter.FullName full-layout/riffinput.dll -Force
@@ -108,7 +118,7 @@ Copy-Item THIRD_PARTY_NOTICES.md full-layout/Licenses/Launcher/THIRD_PARTY_NOTIC
 Remove-Item -LiteralPath full-layout/AppxBlockMap.xml,full-layout/AppxSignature.p7x,'full-layout/[Content_Types].xml',full-layout/AppxMetadata/CodeIntegrity.cat -Force -ErrorAction SilentlyContinue
 $sdkRoot="${env:ProgramFiles(x86)}\Windows Kits\10"
 $sdk=Get-ChildItem "$sdkRoot\bin" -Directory | Where-Object {Test-Path "$($_.FullName)\x64\signtool.exe"} | Sort-Object {[version]$_.Name} -Descending | Select-Object -First 1
-$package="$root\xenia-artifacts\Beatles-Rock-Band-Launcher-0.6.0.13-x64.appx"
+$package="$root\xenia-artifacts\Beatles-Rock-Band-Launcher-0.6.0.14-x64.appx"
 & "$($sdk.FullName)\x64\makeappx.exe" pack /d full-layout /p $package /o /h SHA256
 if($LASTEXITCODE -ne 0){throw 'Package validation failed'}
 $cert=New-SelfSignedCertificate -Type Custom -Subject 'CN=XeniaRiffmasterLab' -KeyUsage DigitalSignature -CertStoreLocation 'Cert:\CurrentUser\My' -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3','2.5.29.19={text}') -NotAfter (Get-Date).AddYears(1)
@@ -120,7 +130,7 @@ Get-FileHash -Algorithm SHA256 $package | ForEach-Object {"$($_.Hash.ToLower()) 
 Copy-Item LICENSE,THIRD_PARTY_NOTICES.md xenia-artifacts/
 Copy-Item docs/INSTALL.md xenia-artifacts/INSTALL.md
 @"
-Beatles Rock Band Launcher 0.6.0.13, full source build.
+Beatles Rock Band Launcher 0.6.0.14, full source build.
 Upstream $upstream; patch $env:GITHUB_SHA.
 Full WGI buttons + native GameInput whammy/tilt; short polling snapshot; local shared log.
 Audio unregister releases global region before waiting on callback; retiring slots cannot be reused.
@@ -130,6 +140,8 @@ Guitar UI neutral release ignores sensor axes only in the release check; held bu
 Whammy and tilt remain unchanged in guest state. Normal controller release rules unchanged.
 Native Xbox account selection maps to persistent offline local saves. Legacy single-profile state is staged and preserved before initialization.
 Guest clock retains fractional ticks across polling and samples under its clock lock.
+Audio capacity is leased per actual submitted frame; callbacks that return empty do not consume slots.
+Rejected XAudio2 buffers return their slot; opt-in worker counters expose empty or stuck callbacks.
 Opt-in audio diagnostics export active calibration/settings and log queue depth once per second; default queue remains64.
 An explicit compare-before-write calibration restore backs up the original and applies only timing fields once, before guest startup.
 Native-account, audio-sync and story-save console verification is still required for this build.
