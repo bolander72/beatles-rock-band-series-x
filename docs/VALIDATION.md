@@ -12,6 +12,8 @@ The local profile persisted, but story progress has not yet been saved and reloa
 
 Version 0.6.0.11 registered successfully after approval of its account-information permission. Its first full-stop launch through Device Portal reached the game's opening logos and animated intro without profile or Play input. The earlier blue stall was not observed on that launch. A read-back of the original per-user LocalState matched the pre-update backup: all 15 non-log files were unchanged. The persistent Game default was still enabled. The portal's file browser exposes the old per-user folder; these observations do not verify the new shared save state or story-save reload. Physical tile launch, native account selection and gameplay on this exact build remain pending.
 
+The player subsequently confirmed working menus, but Quick Play had a substantial audio/note offset from the beginning of the song, using TV speakers. Audio synchronization therefore fails the gameplay gate on 0.6.0.11. Development 0.6.0.12 adds [opt-in audio metadata and active-calibration diagnostics](AUDIO-DIAGNOSTICS.md); it is not a verified fix. Screenshots used for inspection are deleted afterward at the player's request.
+
 ## Automated checks
 
 - Synthetic XEX metadata: correct title, wrong title, DLL/patch rejection, truncated/malformed data, missing files, duplicate paths, remembered missing copy, and ambiguous copies.
