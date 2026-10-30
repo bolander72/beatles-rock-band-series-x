@@ -21,12 +21,14 @@ Version 0.6.0.12 passed its Windows build and package/source audit and was insta
 - [x] Fresh source preparation from the pinned upstream succeeds.
 - [x] The actual original clock function reproduces polling-dependent drift; the patched function matches aggregate conversion in local sanitizer tests. A separate four-thread million-call stress check also matches exactly.
 - [x] Synthetic calibration recovery decisions reject stale settings, unrelated field changes and backup/receipt conflicts; recovery after the calibration commit and consumed-command behavior pass.
-- [ ] Full Windows build and regression checks pass.
-- [ ] APPX, runtime imports, capabilities, corresponding source and matching symbols checked.
+- [x] Full Windows build and regression checks pass: source `fb634e5`, [run 41090860641](https://github.com/bolander72/beatles-rock-band-series-x/actions/runs/41090860641).
+- [x] APPX, 1,877 block hashes, 222 runtime imports, unchanged capabilities, 55,751 corresponding-source entries and matching native symbols checked.
 - [ ] Console guest time tracks host/audio time without the measured cumulative deficit.
 - [ ] Explicit calibration recovery preserves a backup and restores only the expected timing settings.
 - [ ] The player verifies synchronized song play on the resulting setup.
 - [ ] Story progress survives a full quit and correct-account relaunch.
+
+The first 0.6.0.13 update launch reached the visible game intro directly, with the full 5,120 MiB Game allowance and the existing local account in slot 0. The console reported a 1,745,500,000 Hz host clock and 50,000,000 Hz guest clock. A short six-observation startup interval advanced 6,389 guest milliseconds over 6,389.618 host milliseconds. This is consistent with millisecond log quantization, but it is not a steady audio test: the early audio playback count advanced only about 85 ms during that interval. Longer running-song timing, the guarded calibration restore and physical synchronization remain unverified. No screenshot file was retained.
 
 ## Automated checks
 
