@@ -35,6 +35,14 @@ int main() {
   }
   Write(control, "enabled=1\n");
   assert(beatles::ReadAudioDiagnosticConfig(control).queued_frames == 64);
+  assert(!beatles::ReadAudioDiagnosticConfig(control).dedicated_xma_thread);
+  Write(control, "enabled=1\ndecoder_thread=dedicated\n");
+  assert(beatles::ReadAudioDiagnosticConfig(control).dedicated_xma_thread);
+  for (const char* text : {"enabled=0\ndecoder_thread=dedicated\n",
+       "enabled=1\ndecoder_thread=invalid\n", "enabled=1\ndecoder_thread=inline\n"}) {
+    Write(control, text);
+    assert(!beatles::ReadAudioDiagnosticConfig(control).dedicated_xma_thread);
+  }
   Write(control, std::string(4097, 'x'));
   assert(!beatles::ReadAudioDiagnosticConfig(control).enabled);
   const auto source = root / "private-state";

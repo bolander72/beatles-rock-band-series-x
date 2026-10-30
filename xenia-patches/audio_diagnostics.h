@@ -15,6 +15,7 @@ inline constexpr char kAudioDiagnosticDirectory[] =
 struct AudioDiagnosticConfig {
   bool enabled = false;
   uint32_t queued_frames = 64;
+  bool dedicated_xma_thread = false;
 };
 inline AudioDiagnosticConfig ReadAudioDiagnosticConfig(
     const std::filesystem::path& path = kAudioDiagnosticControl) noexcept {
@@ -48,6 +49,9 @@ inline AudioDiagnosticConfig ReadAudioDiagnosticConfig(
         const auto number = std::stoul(value, &used);
         if (used != value.size() || number < 4 || number > 64) return {};
         result.queued_frames = static_cast<uint32_t>(number);
+      } else if (key == "decoder_thread") {
+        if (value != "inline" && value != "dedicated") return {};
+        result.dedicated_xma_thread = value == "dedicated";
       } else return {};
     }
     if (input.bad()) return {};

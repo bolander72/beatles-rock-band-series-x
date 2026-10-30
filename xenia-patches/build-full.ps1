@@ -23,6 +23,8 @@ Copy-Item xenia-source/src/xenia/apu/audio_system.cc build/audio_capacity.origin
 Copy-Item xenia-source/src/xenia/apu/xaudio2/xaudio2_audio_driver.cc build/xaudio2_capacity.original.cc
 python xenia-patches/prepare_audio_capacity.py xenia-source
 if($LASTEXITCODE){throw "Audio capacity source preparation failed"}
+python xenia-patches/prepare_audio_decoder.py xenia-source
+if($LASTEXITCODE){throw "Audio decoder source preparation failed"}
 $vswhere="${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 $vs=& $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 $compile=@"
@@ -50,6 +52,8 @@ if errorlevel 1 exit /b 1
 python xenia-patches/test_audio_capacity.py --original build/audio_capacity.original.cc --patched xenia-source/src/xenia/apu/audio_system.cc --compiler cl --work build/audio-capacity-tests
 if errorlevel 1 exit /b 1
 python xenia-patches/test_audio_submit_failure.py --original build/xaudio2_capacity.original.cc --patched xenia-source/src/xenia/apu/xaudio2/xaudio2_audio_driver.cc --compiler cl --work build/audio-submit-tests
+if errorlevel 1 exit /b 1
+python xenia-patches/test_audio_decoder.py --source xenia-source --compiler cl --work build/audio-decoder-tests
 if errorlevel 1 exit /b 1
 
 
@@ -81,20 +85,20 @@ if($LASTEXITCODE -ne 0){throw 'UWP configure failed'}
 # settings before the much longer emulator build. SelectedFiles is the MSBuild
 # single-file compile target; no project references or linking are needed here.
 $msbuild="$vs\MSBuild\Current\Bin\MSBuild.exe"
-$projects=@(Get-ChildItem build/uwp -Recurse -Filter *.vcxproj | Where-Object {$_.BaseName -in @('xenia-uwp','xenia-kernel')})
-if($projects.Count -ne 2){throw 'Native account preflight projects not found'}
+$projects=@(Get-ChildItem build/uwp -Recurse -Filter *.vcxproj | Where-Object {$_.BaseName -in @('xenia-uwp','xenia-kernel','xenia-apu')})
+if($projects.Count -ne 3){throw 'Native account preflight projects not found'}
 $preflightCount=0
 $preflightFailures=@()
 foreach($project in $projects){
   [xml]$description=Get-Content $project.FullName
   foreach($item in $description.SelectNodes("//*[local-name()='ClCompile' and @Include]")){
-    if($item.Include -notmatch '[\\/](console_accounts\.cc|App\.cpp|emulator_window\.cc|xam_ui\.cc)$'){continue}
+    if($item.Include -notmatch '[\\/](console_accounts\.cc|App\.cpp|emulator_window\.cc|xam_ui\.cc|xma_decoder\.cc)$'){continue}
     & $msbuild $project.FullName /t:ClCompile /p:Configuration=Release /p:Platform=x64 /p:BuildProjectReferences=false "/p:SelectedFiles=$($item.Include)" /verbosity:minimal
     if($LASTEXITCODE -ne 0){$preflightFailures += $item.Include}
     ++$preflightCount
   }
 }
-if($preflightCount -ne 4){throw 'Expected all four native account integration units to compile'}
+if($preflightCount -ne 5){throw 'Expected all five changed integration units to compile'}
 if($preflightFailures.Count){throw "Native account preflight failed: $($preflightFailures -join ', ')"}
 Set-Location $root
 python xenia-patches/archive_source.py xenia-source xenia-artifacts/corresponding-source.tar.gz
@@ -108,7 +112,7 @@ Set-Location $root
 # Repack to include the explicitly loaded input DLL even if the VS packager
 # omits an import library whose exports are all resolved dynamically.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory("$root\xenia-source\build\uwp\release\Xenia-Netplay-0.6.0.14.appx","$root\full-layout")
+[IO.Compression.ZipFile]::ExtractToDirectory("$root\xenia-source\build\uwp\release\Xenia-Netplay-0.6.0.15.appx","$root\full-layout")
 $adapter=Get-ChildItem xenia-source/build/uwp -Recurse -Filter riffinput.dll | Where-Object {$_.FullName -match 'Release'} | Select-Object -First 1
 if(!$adapter){throw 'Built input adapter missing'}
 Copy-Item $adapter.FullName full-layout/riffinput.dll -Force
@@ -118,7 +122,7 @@ Copy-Item THIRD_PARTY_NOTICES.md full-layout/Licenses/Launcher/THIRD_PARTY_NOTIC
 Remove-Item -LiteralPath full-layout/AppxBlockMap.xml,full-layout/AppxSignature.p7x,'full-layout/[Content_Types].xml',full-layout/AppxMetadata/CodeIntegrity.cat -Force -ErrorAction SilentlyContinue
 $sdkRoot="${env:ProgramFiles(x86)}\Windows Kits\10"
 $sdk=Get-ChildItem "$sdkRoot\bin" -Directory | Where-Object {Test-Path "$($_.FullName)\x64\signtool.exe"} | Sort-Object {[version]$_.Name} -Descending | Select-Object -First 1
-$package="$root\xenia-artifacts\Beatles-Rock-Band-Launcher-0.6.0.14-x64.appx"
+$package="$root\xenia-artifacts\Beatles-Rock-Band-Launcher-0.6.0.15-x64.appx"
 & "$($sdk.FullName)\x64\makeappx.exe" pack /d full-layout /p $package /o /h SHA256
 if($LASTEXITCODE -ne 0){throw 'Package validation failed'}
 $cert=New-SelfSignedCertificate -Type Custom -Subject 'CN=XeniaRiffmasterLab' -KeyUsage DigitalSignature -CertStoreLocation 'Cert:\CurrentUser\My' -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3','2.5.29.19={text}') -NotAfter (Get-Date).AddYears(1)
@@ -130,7 +134,7 @@ Get-FileHash -Algorithm SHA256 $package | ForEach-Object {"$($_.Hash.ToLower()) 
 Copy-Item LICENSE,THIRD_PARTY_NOTICES.md xenia-artifacts/
 Copy-Item docs/INSTALL.md xenia-artifacts/INSTALL.md
 @"
-Beatles Rock Band Launcher 0.6.0.14, full source build.
+Beatles Rock Band Launcher 0.6.0.15, full source build.
 Upstream $upstream; patch $env:GITHUB_SHA.
 Full WGI buttons + native GameInput whammy/tilt; short polling snapshot; local shared log.
 Audio unregister releases global region before waiting on callback; retiring slots cannot be reused.
@@ -142,6 +146,8 @@ Native Xbox account selection maps to persistent offline local saves. Legacy sin
 Guest clock retains fractional ticks across polling and samples under its clock lock.
 Audio capacity is leased per actual submitted frame; callbacks that return empty do not consume slots.
 Rejected XAudio2 buffers return their slot; opt-in worker counters expose empty or stuck callbacks.
+The Beatles launcher uses inline XMA decoding; an explicit diagnostic decoder_thread=dedicated permits comparison.
+Story save and reopen succeeded on14, but audio stalled again after reopening; inline mode is a candidate until console verified.
 Opt-in audio diagnostics export active calibration/settings and log queue depth once per second; default queue remains64.
 An explicit compare-before-write calibration restore backs up the original and applies only timing fields once, before guest startup.
 Native-account, audio-sync and story-save console verification is still required for this build.

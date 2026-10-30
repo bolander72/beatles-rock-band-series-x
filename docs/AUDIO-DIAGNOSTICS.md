@@ -1,6 +1,6 @@
 # Audio timing investigation
 
-The player reported a substantial audio/note offset from the start of Quick Play on 0.6.0.11, using TV speakers. Menus work. This is an unresolved release blocker; no audio-sync fix has been verified.
+The player reported a substantial audio/note offset from the start of Quick Play on 0.6.0.11, using TV speakers. Later clock/calibration changes restored timing, but a separate intermittent loss of audio remains a release blocker, including after reopening version 14.
 
 Development version 0.6.0.12 adds an opt-in diagnostic. It does not change calibration, song files, instrument input or the audio clock. With no valid control file, the existing 64-frame queue and private logging remain unchanged.
 
@@ -32,3 +32,9 @@ A separate, opt-in repair accepts `D:/DevelopmentFiles/BeatlesCalibrationRestore
 The current worker consumes capacity before invoking the guest audio callback. A callback that returns without a frame receives no native completion event, so that capacity is lost. Extracted actual-source tests reproduce permanent starvation after 64 initial empty callbacks and after periodic empty callbacks during otherwise successful output.
 
 Candidate 14 makes the worker's capacity check a probe protected from client retirement. Each actual submitted frame then leases its own slot. A rejected native buffer returns its slot because no completion event will arrive. Existing queue limits and cadence remain in effect. An opt-in once-per-second pump log counts callback entries, callback returns and frame attempts; it can distinguish returned empty callbacks from an execution that never returns. No PCM is recorded. This correction is not yet verified as the cause or fix of the reported Xbox stall.
+
+## Candidate 15: decoder-thread comparison
+
+The dedicated Beatles launcher now selects inline XMA decoding at startup, overriding the stored `use_dedicated_xma_thread` value without rewriting the configuration or game calibration. Its effective mode is logged explicitly. This tests a possible decoder-thread handoff stall; a successful first launch alone is insufficient verification.
+
+For a deliberate comparison, version 15 also accepts `decoder_thread=inline` or `decoder_thread=dedicated` in the enabled diagnostic control file. Missing, disabled or invalid controls select inline mode and retain the 64-frame queue. Removing diagnostics does not restore the older dedicated-thread default in this launcher. Change modes only between full app launches, and preserve failed-session logs before restarting.
