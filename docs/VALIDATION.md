@@ -10,6 +10,8 @@ The first 0.6.0.9 Play attempt remained on a solid blue screen during early gues
 
 The local profile persisted, but story progress has not yet been saved and reloaded in this build. A separate diagnostic successfully enumerated a native signed-in Xbox account and reported support for the native account picker. Development version 0.6.0.11 implements account association and state migration; these still need console verification. Diagnostic enumeration alone does not prove account selection, ownership or game save/reload. Independent second-guitar routing and USB microphone capture are still implementation work.
 
+Version 0.6.0.11 registered successfully after approval of its account-information permission. Its first full-stop launch through Device Portal reached the game's opening logos and animated intro without profile or Play input. The earlier blue stall was not observed on that launch. A read-back of the original per-user LocalState matched the pre-update backup: all 15 non-log files were unchanged. The persistent Game default was still enabled. The portal's file browser exposes the old per-user folder; these observations do not verify the new shared save state or story-save reload. Physical tile launch, native account selection and gameplay on this exact build remain pending.
+
 ## Automated checks
 
 - Synthetic XEX metadata: correct title, wrong title, DLL/patch rejection, truncated/malformed data, missing files, duplicate paths, remembered missing copy, and ambiguous copies.
@@ -28,7 +30,9 @@ The local profile persisted, but story progress has not yet been saved and reloa
 - [x] APPX block hashes, x64 identity, seven declared capabilities including `userAccountInformation`, and multi-user manifest checked: 1,876 blocks and 221 imports compatible with the tested Microsoft runtime.
 - [x] Matching 55,740-entry source archive checked; 24 selected prepared-source/build files matched, including unchanged input, whammy/tilt and audio paths from 0.6.0.10.
 - [x] Native account binding, state migration and common title-launch guard regressions pass in the Windows build. The actual PDB identifiers match both native binaries.
-- [ ] Console registration and migration preserve existing local progress.
+- [x] Console registration succeeds; the first full-stop Device Portal launch reaches the animated intro without profile or Play input.
+- [x] The original per-user data is retained: all 15 non-log files match the pre-update backup. Persistent Game default remains enabled.
+- [ ] Shared-state migration preserves the correct account's existing progress.
 - [ ] Physical tile startup bypasses emulator profile and Play screens; repeated starts reach the game without a blue stall.
 - [ ] Native account selection and cancellation work, and each account receives the correct offline profile.
 - [ ] A song, prompt intro skip, whammy and ordinary tilt work on this exact build.
