@@ -1,6 +1,8 @@
 Development preview of **The Beatles: Rock Band** for Xbox Series X Developer Mode, powered by a customized Xenia UWP build.
 
-**Draft for remaining console checks.** This version opened directly into the game, and the player completed a song with audio/video timing reported correct on one Xbox PDP Riffmaster setup. That test used the player's restored earlier calibration. Story-save/reload, separate-account save ownership and a coordinated cold launch through the physical Dev Home tile remain unverified.
+**Draft held: later audio/freeze blocker.** After the successful synchronized song test, the player reported another freeze and then missing audio after a requested restart, with no unrequested activation during that interval. This build is not ready for publication. Candidate 14 is investigating a reproduced audio output-slot leak; its fix has not yet been verified on Xbox.
+
+**Earlier console checks:** This version opened directly into the game, and the player completed a song with audio/video timing reported correct on one Xbox PDP Riffmaster setup. That test used the player's restored earlier calibration. Story-save/reload, separate-account save ownership and a coordinated cold launch through the physical Dev Home tile remain unverified.
 
 Version 13 preserves fractional guest-clock ticks between reads. The earlier clock code discarded those fractions on every update; a console trace showed guest time losing about 386 ms over 100 seconds. In the corrected build's longer trace, guest time tracked host time within the log's millisecond precision over a minute. This is clock evidence, not an acoustic measurement of a TV. The previous audio/note regression also involved changed saved calibration; the separate physical contribution of the clock fix and calibration recovery has not been isolated.
 
