@@ -14,6 +14,20 @@ Version 0.6.0.11 registered successfully after approval of its account-informati
 
 The player subsequently confirmed working menus, but Quick Play had a substantial audio/note offset from the beginning of the song, using TV speakers. Audio synchronization therefore fails the gameplay gate on 0.6.0.11. Development 0.6.0.12 adds [opt-in audio metadata and active-calibration diagnostics](AUDIO-DIAGNOSTICS.md); it is not a verified fix. Screenshots used for inspection are deleted afterward at the player's request.
 
+Version 0.6.0.12 passed its Windows build and package/source audit and was installed on the console. The player selected the existing native account through Xbox's account screen; the game log reports account association with local slot 0. The player then played “Do You Want to Know a Secret” and reported that the audio/note offset persisted. This proves neither story-save reload nor independent second-account ownership. Active common calibration/settings and audio timing metadata were recovered from the running app's shared state, rather than the retained legacy per-user folder. Measured queue depth, guest-clock loss and calibration comparison are documented in [the audio investigation](AUDIO-DIAGNOSTICS.md).
+
+## Development candidate 0.6.0.13
+
+- [x] Fresh source preparation from the pinned upstream succeeds.
+- [x] The actual original clock function reproduces polling-dependent drift; the patched function matches aggregate conversion in local sanitizer tests. A separate four-thread million-call stress check also matches exactly.
+- [x] Synthetic calibration recovery decisions reject stale settings, unrelated field changes and backup/receipt conflicts; recovery after the calibration commit and consumed-command behavior pass.
+- [ ] Full Windows build and regression checks pass.
+- [ ] APPX, runtime imports, capabilities, corresponding source and matching symbols checked.
+- [ ] Console guest time tracks host/audio time without the measured cumulative deficit.
+- [ ] Explicit calibration recovery preserves a backup and restores only the expected timing settings.
+- [ ] The player verifies synchronized song play on the resulting setup.
+- [ ] Story progress survives a full quit and correct-account relaunch.
+
 ## Automated checks
 
 - Synthetic XEX metadata: correct title, wrong title, DLL/patch rejection, truncated/malformed data, missing files, duplicate paths, remembered missing copy, and ambiguous copies.
