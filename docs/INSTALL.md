@@ -2,6 +2,8 @@
 
 This installs a community Xenia-based app in **Xbox Developer Mode**. The Xbox tile displays **The Beatles: Rock Band**. It does not install the original game or add official backward compatibility.
 
+**Version 0.6.0.11 is a development candidate awaiting console checks.** Its Windows build and package/source audits passed. Read the release's validation status before installing. The earlier 0.6.0.10 draft uses an offline Player 1; 0.6.0.11 adds native console-account association as described below.
+
 ## What you need
 
 - Xbox Series X with Developer Mode activated.
@@ -26,6 +28,8 @@ To avoid repeatedly selecting Game after updates, enable **Device Portal → Set
 2. In Device Portal → **Home**, choose **Add** under installed apps.
 3. Select the launcher APPX. Add the Microsoft x64 VCLibs dependency if Device Portal requests it and it is not already installed. Finish registration.
 4. With the persistent default enabled before installation, the app should inherit **Game**. If it was already installed as App, correct it once: on the TV in Dev Home, highlight **The Beatles: Rock Band** → **View** (two overlapping squares) → **Details** → **App type: Game**. App mode has a lower memory limit and may deny the native instrument input focus needed here.
+
+For an update from 0.6.0.10, back up the app's existing LocalState first. Version 0.6.0.11 adds the account-information permission and stages previous per-user data into multi-user app storage before opening the game. It keeps the originals and stops if save ownership is ambiguous. Do not uninstall, erase a profile association file or resize developer storage to work around a migration error. See [native account testing and recovery](NATIVE-ACCOUNT-TESTING.md).
 
 ## 3. Add your game files
 
@@ -63,7 +67,7 @@ You can instead keep an extracted copy on accessible storage and select **Choose
 1. Plug the Xbox Riffmaster's USB receiver into the Series X, turn on the guitar and let it reconnect.
 2. For the verified single-guitar setup, turn the ordinary controller off before opening the app. Use the guitar's Xbox button to return to Dev Home if needed.
 3. Open **The Beatles: Rock Band**. Once configured, the game launches directly without the Xenia game browser.
-4. Version 0.6.0.10 automatically creates an offline **Player 1** when no local profile exists. Its identity and sign-in persisted across three startup checks. You should not need the emulator's profile wizard or a Play screen during normal startup with one valid game copy. This local player is separate from your Microsoft account; native Xbox account association and story-save/reload testing are still in progress.
+4. Sign in to your console account. The 0.6.0.11 candidate associates that account with a persistent local save profile, using Xbox's native picker if selection is needed. Normal startup with one valid game copy is designed to bypass the emulator's profile wizard and Play screen. This account-aware startup still needs console verification. Story progress remains local; the integration does not authenticate to Xbox 360 Xbox Live or supply cloud saves.
 5. If setup remains visible, check App type **Game**, game-file location, and the receiver connection. Use **Refresh** after copying files.
 
 ## 5. Calibrate once

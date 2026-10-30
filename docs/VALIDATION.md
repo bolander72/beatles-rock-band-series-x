@@ -22,6 +22,22 @@ The local profile persisted, but story progress has not yet been saved and reloa
 
 ## First-launcher release checklist
 
+### Native-account development candidate 0.6.0.11
+
+- [x] Full Windows build passes: source `53bbb7d`, [run 40974624843](https://github.com/bolander72/beatles-rock-band-series-x/actions/runs/40974624843).
+- [x] APPX block hashes, x64 identity, seven declared capabilities including `userAccountInformation`, and multi-user manifest checked: 1,876 blocks and 221 imports compatible with the tested Microsoft runtime.
+- [x] Matching 55,740-entry source archive checked; 24 selected prepared-source/build files matched, including unchanged input, whammy/tilt and audio paths from 0.6.0.10.
+- [x] Native account binding, state migration and common title-launch guard regressions pass in the Windows build. The actual PDB identifiers match both native binaries.
+- [ ] Console registration and migration preserve existing local progress.
+- [ ] Physical tile startup bypasses emulator profile and Play screens; repeated starts reach the game without a blue stall.
+- [ ] Native account selection and cancellation work, and each account receives the correct offline profile.
+- [ ] A song, prompt intro skip, whammy and ordinary tilt work on this exact build.
+- [ ] Story progress survives saving, full quit and relaunch under the correct account.
+
+These are separate from the earlier 0.6.0.10 observations below. Native account association and game save/reload have not been verified on the console.
+
+### Earlier offline-profile candidate 0.6.0.10
+
 - [x] Windows launcher build passes (run 40948354810, source `6694ab6`, version 0.6.0.10).
 - [x] APPX contents, hashes, dependencies, notices and corresponding-source archive checked: 1,873 package blocks, 219 runtime imports, and 55,726 source-archive entries.
 - [x] Installed app display name is The Beatles: Rock Band (confirmed in Device Portal after registration).
