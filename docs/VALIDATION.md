@@ -95,10 +95,24 @@ Source `f52131c` passed [Windows run 41129492340](https://github.com/bolander72/
 
 Device Portal registered version 0.6.0.14 and the app opened the game automatically. Its fresh log confirms the 5,120 MiB Game allowance, the existing account's local slot 0 and the earlier restored calibration unchanged. After initial startup, native audio playback advanced by approximately 48,000 samples per second at 48 kHz, with about 188 submitted buffers per second and a queue of one or two buffers. Worker callback counts also continued advancing. Across a steady 30-interval window, host time advanced 30,078.023 ms, guest time 30,078 ms and native playback 30,080 ms. These counters establish output progress; they do not measure audible TV latency or prove note calibration.
 
-The player then confirmed: "Audio is playing normally." They subsequently started single-player Story, completed Twist and Shout, and reported that it played very well and saved. This verifies a completed Story song and an in-session save on version 14. Persistence after a full close/reopen is a separate check and remains pending. A fresh start alone does not prove that the capacity bug caused every earlier stall. Story save/reload and longer stability remain release gates.
+The player then confirmed: "Audio is playing normally." They subsequently started single-player Story, completed Twist and Shout, and reported that it played very well and saved. This verifies a completed Story song and an in-session save on version 14. The subsequent close/reopen result is recorded below. A fresh start alone does not prove that the capacity bug caused every earlier stall.
 
 ### Version 14 reload result: progress retained, audio stalled again
 
 After one authorized full termination and relaunch, the player confirmed that Story progress was still present, but audio was absent again. The new log retained `mute=false`, the same account slot and the full Game memory allowance. Its audio pump stopped after the last recorded entry `entered=20 returned=19 frame_attempts=19`, while later Story-menu activity continued. This is consistent with execution stalling inside a guest callback; it is not the empty-callback capacity loss reproduced by the version 14 regression test. A native stack has not yet established the exact wait location.
 
 Version 15 selects the existing inline XMA decoding path after configuration loading and before decoder-thread creation. The upstream threaded path contains completion waits; avoiding that handoff is a controlled hypothesis, not a confirmed live fix. An opt-in `decoder_thread=dedicated` diagnostic comparison remains available. Tests compile the actual startup-selection block and register-write method with host doubles to verify inline dispatch, explicit threaded comparison, multiple contexts and unchanged stop/lock/clear handling. These tests do not establish live decoder correctness or prove the cause of the stall. Calibration, clock scalar, saves and instrument mapping are unchanged.
+
+### Version 15 startup-counter verification
+
+Source `666612c` passed [Windows run 41138201434](https://github.com/bolander72/beatles-rock-band-series-x/actions/runs/41138201434), including the changed decoder integration unit compiled with the real project settings. The package/source audit verified 1,877 APPX blocks, 222 compatible runtime imports, the same seven capabilities, matching PDB identifiers and 55,756 source-archive entries. The source archive SHA-256 is `3b9b4b2cbbf902f7843ba4cb67c0cf66a50c3707cb67dd7b5cff1e6487674a27`.
+
+After registration, the game opened automatically. Three distinct startup sessions, including two full termination/relaunch cycles, logged `dedicated_thread=false`, the full 5,120 MiB allowance, the same account's local slot 0 and unchanged restored calibration. Audio counters continued past the earlier startup-stall point:
+
+| Startup | Last observed guest uptime | Recent host interval | Guest interval | Native playback interval |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 69.980 s | 30,078.019 ms | 30,078 ms | 30,080 ms |
+| 2 | 96.225 s | 30,078.010 ms | 30,078 ms | 30,080 ms |
+| 3 | 118.529 s | 30,078.024 ms | 30,078 ms | 30,070 ms |
+
+These are audio-output progress measurements, not listening tests or measurements of the TV's acoustic latency. The app was then fully closed and Dev Home left running for the player's normal tile-launch/Continue Story/song check. Audible audio, a completed song and the physical tile launch on version 15 remain pending. The exact native wait involved in version 14's failure is still unconfirmed.
