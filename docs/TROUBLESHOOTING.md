@@ -25,3 +25,7 @@
 ## Reporting an issue
 
 Include app version, console model, App/Game type, instrument model, the failing step, whether audio also stops, and whether repeating the same song changes the behavior. Do not upload game files, copyrighted music or charts, device credentials, keys, or personal console identifiers. Inspect and redact logs before sharing them publicly. Local adapter and emulator logs can contain file paths and device/network information.
+
+## Remote launch commands during play
+
+During console testing, Device Portal reported the game as not running while the player was playing it. Check the TV before sending another Launch/Resume command. Repeated activation commands may interrupt the current song and return to startup. Coordinate any remote launch or restart with the player.

@@ -1,4 +1,4 @@
-"""Assemble the audited 0.6.0.11 install bundle; no game files. BSD-3-Clause."""
+"""Assemble the audited 0.6.0.13 install bundle; no game files. BSD-3-Clause."""
 import argparse
 import hashlib
 import importlib.util
@@ -7,11 +7,11 @@ import shutil
 import zipfile
 from pathlib import Path
 
-VERSION = '0.6.0.11'
-PACKAGE = 'Beatles-Rock-Band-Launcher-0.6.0.11-x64.appx'
-PACKAGE_SHA = '41f131fb227fad65123e061112a7bd698f6cd1f7c0046e4300c9dc3eef6729ad'
-SOURCE_SHA = 'af075c22d9cacc6265e5f26820aa182aa51711f92af8800692c107501c93ac03'
-BUILD_COMMIT = '53bbb7d57892e253cc13b927219c54abd96cb593'
+VERSION = '0.6.0.13'
+PACKAGE = 'Beatles-Rock-Band-Launcher-0.6.0.13-x64.appx'
+PACKAGE_SHA = 'b0a44932dec6218cee18608f0b05b6c93854e3d32fb36d1aa1d08b3d21fb9639'
+SOURCE_SHA = '06162d73456d2224ce028f161738413207bfc982c50422a2f7dfd643cd624f01'
+BUILD_COMMIT = 'fb634e558fd115c9657b3dcc13e2d30f57565028'
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -47,6 +47,8 @@ def assemble(incoming, output):
     shutil.copy2(ROOT / 'docs/COMPATIBILITY.md', folder / 'COMPATIBILITY.md')
     shutil.copy2(ROOT / 'docs/TROUBLESHOOTING.md', folder / 'TROUBLESHOOTING.md')
     shutil.copy2(ROOT / 'docs/NATIVE-ACCOUNT-TESTING.md', folder / 'NATIVE-ACCOUNT-TESTING.md')
+    for name in ('VALIDATION.md', 'AUDIO-DIAGNOSTICS.md'):
+        shutil.copy2(ROOT / 'docs' / name, folder / name)
     shutil.copy2(ROOT / 'tools/prepare_game.py', folder / 'tools/prepare_game.py')
     (folder / 'START-HERE.txt').write_text(
         'The Beatles: Rock Band - community Developer Mode launcher\n\n'
@@ -55,9 +57,9 @@ def assemble(incoming, output):
         '3. Supply your own extracted Xbox 360 game files. See INSTALL.md for the Mac/browser transfer method.\n'
         '4. Connect the Xbox Riffmaster receiver, sign in to your console account and open The Beatles: Rock Band. If needed, select your account in the native Xbox picker.\n'
         'With a single valid game copy, startup opens the game directly. See INSTALL.md for calibration and controller setup.\n\n'
-        'DEVELOPMENT PREVIEW: Windows build and package/source checks passed. This exact build has not completed Xbox startup, account-migration or story-save/reload verification. See NATIVE-ACCOUNT-TESTING.md.\n'
+        'DEVELOPMENT PREVIEW: This exact build reached the game directly and completed a player-tested song with audio/video timing reported correct on one Xbox Riffmaster setup. Validation used restored personal calibration. Physical tile cold startup, story-save/reload and separate-account ownership still need verification. See VALIDATION.md.\n'
         'This update adds userAccountInformation permission to associate console accounts with persistent local saves. Saves remain offline; Xbox Live authentication and cloud saves are not provided. Back up existing app data before updating.\n'
-        'One Xbox Riffmaster is the verified underlying instrument setup. A second independent guitar and microphone capture are not implemented yet.\n'
+        'One Xbox Riffmaster is the tested instrument setup. A second independent guitar and microphone capture are not implemented yet.\n'
         'No game executables, music, charts, DLC or firmware are included. Developer Mode is required.\n'
         'The large corresponding-source.tar.gz download is optional for inspecting/rebuilding the code. Players do not need it.\n'
         'Source and updates: https://github.com/bolander72/beatles-rock-band-series-x\n')
@@ -69,25 +71,31 @@ def assemble(incoming, output):
     record = {
         'version': VERSION, 'display_name': 'The Beatles: Rock Band',
         'build_commit': BUILD_COMMIT,
-        'build_run': 'https://github.com/bolander72/beatles-rock-band-series-x/actions/runs/40974624843',
+        'build_run': 'https://github.com/bolander72/beatles-rock-band-series-x/actions/runs/41090860641',
         'appx_sha256': PACKAGE_SHA, 'corresponding_source_sha256': SOURCE_SHA,
         'verified_package_blocks': checked['verified_uncompressed_blocks'],
         'runtime_imports_checked': checked['runtime_check']['verified_imported_functions'],
-        'console_registration_verified': False, 'console_direct_launch_verified': False,
+        'console_registration_verified': True, 'console_direct_launch_verified': True,
         'console_full_stop_launches_reached_intro': 0,
-        'console_activation_method': None,
+        'console_activation_method': 'Device Portal deployment/activation; physical song play confirmed by player',
         'physical_dev_home_tile_launch_verified': False,
         'local_profile_persists_across_app_restarts': False,
         'story_save_reload_verified': False, 'native_account_binding_implemented': True,
-        'native_account_binding_console_verified': False,
+        'native_account_binding_console_verified': True,
+        'native_account_binding_verified_scope': 'one existing signed-in console account associated with local slot 0; separate-account save ownership unverified',
         'legacy_save_migration_console_verified': False,
-        'supported_users': 'multiple', 'account_information_permission_added': True,
+        'supported_users': 'multiple', 'account_information_permission_declared': True,
+        'capabilities_unchanged_from_0_6_0_11': True,
         'xbox_live_authentication_implemented': False, 'cloud_saves_implemented': False,
         'independent_second_guitar_implemented': False, 'microphone_capture_implemented': False,
         'verification_scope': 'Packaging snapshot; see repository docs/VALIDATION.md for later console results.',
-        'console_gameplay_verified_on_version': '0.6.0.7', 'developer_mode_required': True,
+        'console_gameplay_verified_on_version': VERSION,
+        'console_audio_video_sync_player_verified': True,
+        'console_sync_verification_scope': "one completed song after restoring this player's earlier calibration; other TVs require calibration",
+        'console_guest_clock_tracks_host_over_60_seconds': True,
+        'personal_calibration_or_diagnostic_logs_included': False, 'developer_mode_required': True,
         'previous_direct_launch_evidence': {'version': '0.6.0.10', 'full_stop_portal_launches_reached_intro': 3},
-        'game_files_included': False, 'release_status': 'draft preview; awaiting native-account, startup, gameplay and story-save checks',
+        'game_files_included': False, 'release_status': 'draft preview; song timing verified on one setup; physical tile cold startup, story-save/reload and separate-account ownership remain unverified',
     }
     (folder / 'VERIFICATION.json').write_text(json.dumps(record, indent=2) + '\n')
     files = [p for p in sorted(folder.rglob('*')) if p.is_file()]

@@ -23,9 +23,9 @@ Version 0.6.0.12 passed its Windows build and package/source audit and was insta
 - [x] Synthetic calibration recovery decisions reject stale settings, unrelated field changes and backup/receipt conflicts; recovery after the calibration commit and consumed-command behavior pass.
 - [x] Full Windows build and regression checks pass: source `fb634e5`, [run 41090860641](https://github.com/bolander72/beatles-rock-band-series-x/actions/runs/41090860641).
 - [x] APPX, 1,877 block hashes, 222 runtime imports, unchanged capabilities, 55,751 corresponding-source entries and matching native symbols checked.
-- [ ] Console guest time tracks host/audio time without the measured cumulative deficit.
-- [ ] Explicit calibration recovery preserves a backup and restores only the expected timing settings.
-- [ ] The player verifies synchronized song play on the resulting setup.
+- [x] A 164-observation console trace shows guest time tracking host time: the last 60 intervals advanced 60,155 guest ms over 60,155.010 host ms, within the log's millisecond precision. Audio counters across transitions are not a direct screen/speaker latency measurement.
+- [x] The guarded restore completed and its new active 47-byte snapshot matches the earlier calibration backup exactly. The completed request was renamed out of the active control path.
+- [x] The player completed a song on 0.6.0.13 and explicitly confirmed that the audio and video were back in sync.
 - [ ] Story progress survives a full quit and correct-account relaunch.
 
 The first 0.6.0.13 update launch reached the visible game intro directly, with the full 5,120 MiB Game allowance and the existing local account in slot 0. The console reported a 1,745,500,000 Hz host clock and 50,000,000 Hz guest clock. A short six-observation startup interval advanced 6,389 guest milliseconds over 6,389.618 host milliseconds. This is consistent with millisecond log quantization, but it is not a steady audio test: the early audio playback count advanced only about 85 ms during that interval. Longer running-song timing, the guarded calibration restore and physical synchronization remain unverified. No screenshot file was retained.
@@ -76,3 +76,9 @@ These are separate from the earlier 0.6.0.10 observations below. Native account 
 - [ ] Missing game/drive returns to setup.
 
 The release notes will identify which console checks have actually passed. Unsupported instruments and untested configurations stay documented as such.
+
+## Latest physical timing result
+
+After the earlier calibration was restored on 0.6.0.13, the player reported successful intro/menu use and completed a song with audio/video timing correct. A mid-song return to the intro happened while the operator was sending Device Portal activation commands; those commands are the likely interruption and this is not evidence of a spontaneous gameplay reset. No further activation or settings changes were made during play after this was identified. Device Portal had reported the game as not running during physical gameplay, so that status alone must not be used to trigger another launch.
+
+The exact contribution of calibration restoration and the fractional-clock fix has not been isolated in separate physical song tests. This result applies to the tested setup and does not establish universal calibration, full-band support or story-save reload.
