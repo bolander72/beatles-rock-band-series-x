@@ -6,7 +6,9 @@ void AudioSystem::StopDiagnosticWatchdog() {
 }
 
 void AudioSystem::DiagnosticWatchdogMain() {
-  beatles::AudioStallPolicy policy;
+  // Startup callbacks lasting 1-2 seconds evade a 5-second detector. Keep the existing
+  // three-capture limit and 5-second spacing, but observe shorter stalls too.
+  beatles::AudioStallPolicy policy(500);
   uint64_t next_heartbeat = 0;
   const uint64_t image_base = reinterpret_cast<uint64_t>(&__ImageBase);
   const auto* nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(

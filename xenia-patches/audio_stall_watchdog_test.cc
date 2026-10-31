@@ -41,6 +41,16 @@ int main() {
   assert(!backwards.Tick(1000, p, true));
   assert(!backwards.Tick(5999, p, true));
   assert(backwards.Tick(6000, p, true));
+  beatles::AudioStallPolicy startup(500);
+  assert(!startup.Tick(1000, p, true));
+  assert(!startup.Tick(1499, p, true));
+  assert(startup.Tick(1500, p, true));
+  assert(!startup.Tick(2000, p, true));
+  assert(!startup.Tick(6499, p, true));
+  assert(startup.Tick(6500, p, true));
+  assert(!startup.Tick(11499, p, true));
+  assert(startup.Tick(11500, p, true));
+  assert(!startup.Tick(16500, p, true));
   Thread thread;
   bool called = false;
   auto result = beatles::CaptureSuspendedThread(thread, [&] {

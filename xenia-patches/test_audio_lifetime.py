@@ -41,7 +41,7 @@ namespace xe::threading {
 struct AudioSystem {
  static constexpr unsigned kMaximumClientCount=1;
  Global global_critical_region_; bool stopping_=false;unsigned destroyed=0;
- struct Client {AudioDriver* driver=nullptr;unsigned next_pump_us=0,callback=0,callback_arg=0,wrapped_callback_arg=0;bool in_use=false,retiring=false;std::mutex lock;} clients_[1];
+ struct Client {double next_pump_fraction_us=0;AudioDriver* driver=nullptr;unsigned next_pump_us=0,callback=0,callback_arg=0,wrapped_callback_arg=0;bool in_use=false,retiring=false;std::mutex lock;} clients_[1];
  std::unique_ptr<xe::threading::Semaphore> client_semaphores_[1];Memory mem;
  Memory* memory(){return &mem;}
  void DestroyDriver(Driver* d){assert(!callback_active.load());assert(global_critical_region_.mutex.try_lock());global_critical_region_.mutex.unlock();delete d;++destroyed;}
@@ -51,7 +51,7 @@ struct AudioSystem {
 main=r'''
 int main(){
  for(int iteration=0;iteration<200;++iteration){
-  AudioSystem audio;audio.clients_[0].driver=new Driver;audio.clients_[0].wrapped_callback_arg=42;audio.clients_[0].in_use=true;
+  AudioSystem audio;audio.clients_[0].driver=new Driver;audio.clients_[0].wrapped_callback_arg=42;audio.clients_[0].in_use=true;audio.clients_[0].next_pump_fraction_us=0.75;
   audio.client_semaphores_[0]=std::make_unique<xe::threading::Semaphore>();
   callback_active=false;worker_locked=false;close_entered=false;allow_worker=false;
   std::thread worker([&]{
@@ -66,6 +66,7 @@ int main(){
   {auto global=audio.global_critical_region_.Acquire();assert(audio.FindFreeClient()==-1);}
   allow_worker=true;worker.join();close.join();
   assert(audio.destroyed==1 && !audio.clients_[0].retiring && audio.FindFreeClient()==0);
+  assert(audio.clients_[0].next_pump_fraction_us==0);
  }
  puts("PASS: 200 callback/unregister races, no global lock while draining, no active callback freed, no slot reused during retirement");
 }

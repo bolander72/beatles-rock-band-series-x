@@ -140,7 +140,7 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   audio.StopDiagnosticWatchdog();
   audio.StopDiagnosticWatchdog();
-  assert(heartbeats >= 4 && stalls == 1 && frames == 2);
+  assert(heartbeats >= 1 && stalls == 1 && frames == 2);
   assert(audio.worker_thread_->native.resumes == 1 && suspended == 0);
   assert(!audio.diagnostic_watchdog_.joinable());
   assert(closed && (last_stall.flags >> 32) == 123);

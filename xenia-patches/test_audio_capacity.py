@@ -18,6 +18,7 @@ prefix = r'''
 #include <atomic>
 #include <cassert>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <memory>
@@ -73,6 +74,7 @@ struct AudioSystem {
  struct Client {
   bool in_use = true;
   uint64_t next_pump_us = 0;
+  double next_pump_fraction_us = 0;
   uint32_t callback = 1, wrapped_callback_arg = 1;
   std::mutex lock;
   Driver* driver = nullptr;

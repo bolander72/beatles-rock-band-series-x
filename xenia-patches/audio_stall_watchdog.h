@@ -21,6 +21,7 @@ struct AudioProgress {
 };
 class AudioStallPolicy {
  public:
+  explicit AudioStallPolicy(uint64_t threshold_ms = 5000) : threshold_ms_(threshold_ms) {}
   bool Tick(uint64_t now_ms, AudioProgress progress, bool armed) {
     if (!armed) { tracking_ = false; return false; }
     if (!tracking_ || !progress.Same(previous_) || now_ms < progress_at_) {
@@ -29,7 +30,7 @@ class AudioStallPolicy {
       progress_at_ = now_ms;
       return false;
     }
-    if (captures_ >= 3 || now_ms - progress_at_ < 5000 ||
+    if (captures_ >= 3 || now_ms - progress_at_ < threshold_ms_ ||
         (captures_ && now_ms - captured_at_ < 5000)) return false;
     ++captures_;
     captured_at_ = now_ms;
@@ -38,6 +39,7 @@ class AudioStallPolicy {
  private:
   AudioProgress previous_{};
   uint64_t progress_at_ = 0, captured_at_ = 0;
+  uint64_t threshold_ms_;
   unsigned captures_ = 0;
   bool tracking_ = false;
 };
