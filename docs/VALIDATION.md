@@ -116,3 +116,11 @@ After registration, the game opened automatically. Three distinct startup sessio
 | 3 | 118.529 s | 30,078.024 ms | 30,078 ms | 30,070 ms |
 
 These are audio-output progress measurements, not listening tests or measurements of the TV's acoustic latency. The app was then fully closed and Dev Home left running for the player's normal tile-launch/Continue Story/song check. Audible audio, a completed song and the physical tile launch on version 15 remain pending. The exact native wait involved in version 14's failure is still unconfirmed.
+
+### Version 15 player test failed; version 16 is diagnostic
+
+The player answered the subsequent tile-launch test with "Audio is missing or cuts out." A new session retained inline mode, the full Game allowance, the same profile and unchanged calibration, but logged only one audio submission before audio progress logging stopped while main-menu activity continued. Version 15 is not verified as an audio fix and must not be released as one. Its three earlier counter checks did not cover this failure.
+
+Version 16 adds an observer that runs independently of the audio worker and the normal logger. It records atomic progress counts, worker phase and pause/running state to a separate, per-session binary diagnostic file. After five seconds without progress, excluding normal no-client/paused states, it can briefly suspend the audio worker, obtain its context and at most 32 raw stack frames, then resume it before writing anything. There are at most three captures per app session. No audio samples, stack-memory contents, account records or story saves are recorded by this observer. Diagnostic files stay on the console/Mac.
+
+The local policy and actual observer-loop tests cover progressing/stalled/idle cases, the capture limit, failed suspension/capture handling, restoration of prior suspend state, write-after-resume ordering, and joining/closing on shutdown. These use native API doubles and do not replace Xbox verification. A build-time host link map accompanies developer symbols so private frame addresses can be interpreted locally without uploading console diagnostics. This build keeps the version 15 decoder behavior and is an investigation tool, not another proposed codec-setting fix.

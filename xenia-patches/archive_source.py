@@ -22,7 +22,8 @@ files.update(Path('xenia-canary-uwp') / n for n in (
     'console_accounts.h', 'console_accounts.cc', 'console_profiles.h',
     'console_profile_storage.h', 'console_profile_migration.h',
     'console_title_account_guard.inc', 'audio_diagnostics.h',
-    'calibration_restore.h', 'calibration_restore_storage.h'))
+    'calibration_restore.h', 'calibration_restore_storage.h',
+    'audio_stall_watchdog.h', 'audio_stall_watchdog.inc'))
 with tarfile.open(a.output, 'w:gz') as archive:
     for relative in sorted(files):
         if relative.name == 'GameInput.h' or '.git' in relative.parts:
