@@ -15,7 +15,7 @@ void AudioSystem::DiagnosticWatchdogMain() {
   const std::wstring path =
       L"D:\\DevelopmentFiles\\BeatlesAudioDiagnostics\\audio-watchdog-" +
       std::to_wstring(std::chrono::system_clock::now().time_since_epoch().count()) + L".bin";
-  HANDLE file = CreateFileW(path.c_str(), GENERIC_WRITE,
+  HANDLE file = CreateFileFromAppW(path.c_str(), GENERIC_WRITE,
       FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
       CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
   if (file == INVALID_HANDLE_VALUE) return;

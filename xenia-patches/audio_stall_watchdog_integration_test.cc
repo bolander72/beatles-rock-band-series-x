@@ -31,7 +31,8 @@ std::atomic<bool> closed{false};
 using TestHandle = void*;
 using TestDword = uint32_t;
 beatles::AudioWatchdogRecord last_stall;
-TestHandle TestCreateFile(const wchar_t*, TestDword, TestDword, void*, TestDword, TestDword, void*) {
+TestHandle TestCreateFile(const wchar_t*, TestDword access, TestDword sharing, void* security, TestDword disposition, TestDword attributes, void* source) {
+  assert(access == 1 && sharing == 7 && !security && disposition == 1 && attributes == 128 && !source);
   assert(suspended == 0);
   return reinterpret_cast<void*>(static_cast<uintptr_t>(1));
 }
@@ -55,7 +56,7 @@ bool TestWriteFile(TestHandle, const void* data, TestDword bytes, TestDword* wri
 bool TestCloseFile(TestHandle) { assert(suspended == 0); closed = true; return true; }
 #define HANDLE TestHandle
 #define DWORD TestDword
-#define CreateFileW TestCreateFile
+#define CreateFileFromAppW TestCreateFile
 #define WriteFile TestWriteFile
 #define CloseHandle TestCloseFile
 #define INVALID_HANDLE_VALUE reinterpret_cast<void*>(static_cast<intptr_t>(-1))
@@ -64,7 +65,7 @@ bool TestCloseFile(TestHandle) { assert(suspended == 0); closed = true; return t
 #define FILE_SHARE_WRITE 2
 #define FILE_SHARE_DELETE 4
 #define CREATE_NEW 1
-#define FILE_ATTRIBUTE_NORMAL 0
+#define FILE_ATTRIBUTE_NORMAL 128
 bool TestGetContext(void*, TestContext* context) {
   assert(suspended == 1 && context->ContextFlags == CONTEXT_FULL);
   context->Rip = reinterpret_cast<uint64_t>(&test_image_base) + 128;

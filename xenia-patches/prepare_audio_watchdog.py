@@ -34,6 +34,7 @@ for name in ('diagnostic_pump_entered_', 'diagnostic_pump_returned_', 'diagnosti
 edit(audio, '#include "xenia-canary-uwp/audio_diagnostics.h"', '''#include "xenia-canary-uwp/audio_diagnostics.h"
 #include "xenia-canary-uwp/audio_stall_watchdog.h"
 #include "xenia/base/platform_win.h"
+#include <fileapifromapp.h>
 #include "xenia/cpu/stack_walker.h"
 #include "xenia/cpu/ppc/ppc_context.h"
 #include <cstring>
